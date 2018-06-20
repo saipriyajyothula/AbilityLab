@@ -6,6 +6,8 @@ var eventEmitter = new events.EventEmitter();
 var express = require("express");
 const path = require('path');
 
+var chartPoint = {x1: 0, y1: 0, x2: 0, y2: 0};
+
 // open the database
 let db = new sqlite3.Database(path.join(__dirname, '../db/database.db'), sqlite3.OPEN_READWRITE, (err) => {
   if (err) {
@@ -41,6 +43,13 @@ app.get('/', function (req, res) {
     res.end("ok");
   });
     
+    app.post('/api/bridge/showStep', function (req, res) {
+    var aWss = expressWs.getWss('/socket/websocket');
+    console.log(req.body);
+    eventEmitter.emit('bridge here');
+    res.end("ok");
+  });
+    
   app.post('/api/soccerPenalty/addPatient', function (req, res) {
     var aWss = expressWs.getWss('/socket/websocket');
     db.serialize(function() {
@@ -55,13 +64,19 @@ app.get('/', function (req, res) {
     db.serialize(function() {
         if(req.body.column == 'FirstName'){
             db.run("UPDATE Patient SET FirstName = ? WHERE PatientID = ?;", req.body.newValue, req.body.PatientID);
-            console.log("first");
         }
         else if(req.body.column == 'LastName'){
             db.run("UPDATE Patient SET LastName = ? WHERE PatientID = ?;", req.body.newValue, req.body.PatientID);
         }
     });
     eventEmitter.emit('modifyPatient');
+    res.end("ok");
+  });
+    
+    app.post('/api/soccerPenalty/setChartRect', function (req, res) {
+    chartPoint = req.body;
+    console.log(req.body);
+    eventEmitter.emit('setChartRect');
     res.end("ok");
   });
 
@@ -91,12 +106,12 @@ app.get('/', function (req, res) {
     db.serialize(function() {
       db.all("SELECT * FROM SoccerPenaltyData WHERE `Result` = 'catch'", function(err, row) {
           for(i in row){
-            catches.push([row[i].XValue, row[i].YValue, row[i].Speed]);
+            catches.push({x: row[i].XValue, h: row[i].YValue, s: row[i].Speed});
           }
       });
       db.all("SELECT * FROM SoccerPenaltyData WHERE `Result` = 'goal'", function(err, row) {
           for(i in row){
-            goals.push([row[i].XValue, row[i].YValue, row[i].Speed]);
+            goals.push({x: row[i].XValue, h: row[i].YValue, s: row[i].Speed});
           }
           var toSend = {"catches":catches, "goals":goals};
           console.log(JSON.stringify(toSend));
@@ -139,12 +154,12 @@ app.get('/', function (req, res) {
       db.serialize(function() {
         db.all("SELECT * FROM SoccerPenaltyData WHERE `Result` = 'catch' AND `SessionId` = (SELECT MAX(`SessionId`) FROM `GameData` WHERE  `GameId` = 1 )", function(err, row) {
             for(i in row){
-              catches.push([row[i].XValue, row[i].YValue, row[i].Speed]);
+              catches.push({x: row[i].XValue, h: row[i].YValue, s: row[i].Speed});
             }
         });
         db.all("SELECT * FROM SoccerPenaltyData WHERE `Result` = 'goal' AND `SessionId` = (SELECT MAX(`SessionId`) FROM `GameData` WHERE  `GameId` = 1 )", function(err, row) {
             for(i in row){
-              goals.push([row[i].XValue, row[i].YValue, row[i].Speed]);
+              goals.push({x: row[i].XValue, h: row[i].YValue, s: row[i].Speed});
             }
             var toSend = {"catches":catches, "goals":goals};
             ws.send(JSON.stringify(toSend));
@@ -164,11 +179,17 @@ app.get('/', function (req, res) {
     ws.on('close', function() {
       console.log('closed');
       eventEmitter.removeListener('sendApplicationQuit', list2 );
+      eventEmitter.removeListener('setChartRect', list3 );
     });
     var list2 = function(){
       ws.send("quit");
     }
+    
+    var list3 = function(){
+      ws.send(JSON.stringify({rectangle: chartPoint}));
+    }
     eventEmitter.on('sendApplicationQuit', list2 );
+    eventEmitter.on('setChartRect', list3 );
   });
 
 

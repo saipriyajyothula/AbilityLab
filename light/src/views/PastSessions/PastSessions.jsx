@@ -8,8 +8,6 @@ var i = 1;
 
 class CurrentApplication extends Component{
 
-
-
   render() {
 
     return (
