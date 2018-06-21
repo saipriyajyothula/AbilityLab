@@ -1,3 +1,4 @@
+var sqlite3 = require('sqlite3').verbose();
 var express = require("express");
 var bodyParser = require("body-parser");
 var routes = require("./routes/routes.js");

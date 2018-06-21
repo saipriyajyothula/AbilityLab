@@ -1,4 +1,4 @@
-const sqlite3 = require('sqlite3').verbose();
+var sqlite3 = require('sqlite3');
 const spawn = require('child_process').spawn;
 var application = null;
 var events = require('events');
