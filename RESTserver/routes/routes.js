@@ -182,11 +182,11 @@ app.get('/', function (req, res) {
       eventEmitter.removeListener('setChartRect', list3 );
     });
     var list2 = function(){
-      ws.send("quit");
+      ws.send(JSON.stringify({message: "quit"}));
     }
     
     var list3 = function(){
-      ws.send(JSON.stringify({rectangle: chartPoint}));
+      ws.send(JSON.stringify({message: "rectangle",data: chartPoint}));
     }
     eventEmitter.on('sendApplicationQuit', list2 );
     eventEmitter.on('setChartRect', list3 );

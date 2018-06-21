@@ -43,7 +43,7 @@ class CurrentApplication extends Component{
             chartstatus = 'down move';
         }
     }
-    
+
     handleMouseUp(e){
         if(chartstatus=='down move'){
             chartFlag = true;
@@ -132,7 +132,7 @@ class CurrentApplication extends Component{
                   <div className='mouseArea' onMouseDown={this.handleDivMouseDown.bind(this)} onMouseMove={this.handleDivMouseMove.bind(this)} onMouseUp={this.handleDivMouseUp.bind(this)}>
             <ResponsiveContainer width="100%" height={500} className="chartContainer">
             <ScatterChart margin={{top: 20, right: 20, bottom: 20, left: 0}} onMouseDown={this.handleMouseDown.bind(this)} onMouseUp={this.handleMouseUp.bind(this)} onMouseMove={this.handleMouseMove.bind(this)}>
-                <XAxis type="number" dataKey={'x'} name='X-Position' domain={[0, 5]} ticks={[0, 1, 2, 3, 4, 5]}>
+                <XAxis type="number" dataKey={'x'} name='X-Position' domain={[0, 4]} ticks={[0, 1, 2, 3, 4]}>
                 <Label value="X-Position" position="insideBottom"/>
                 </XAxis>
                 <YAxis type="number" domain={[0, 2]} ticks={[0, 0.5, 1, 1.5, 2]} dataKey={'h'} name='Height'>
