@@ -143,8 +143,10 @@ var appRouter = function (app) {
 
   app.post('/api/soccerPenalty/launchApplication', function(req, res){
     console.log("spawn app");
-    application = spawn('/Users/francesco/Documents/University/UIC/RehabMay/build/soccerpenalty.app/Contents/MacOS/soccerPenalty', ['fm2']);
-    application.on('close', console.log.bind(console, 'Application closed'));
+
+    var macPath = path.join(__dirname, ('../applications/'+req.body.currentGame+'.app/Contents/MacOS/'+req.body.currentGame));
+    application = spawn(macPath, [req.body.currentPatient]);
+    application.on('close', console.log.bind(console, 'closed'));
     res.end("ok");
   });
 
