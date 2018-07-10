@@ -8,7 +8,7 @@ const path = require('path');
 
 var chartPoint = {x1: 0, y1: 0, x2: 0, y2: 0};
 
-var soccerPenaltyControls = {adaptiveDifficulty: true, level: 1, maxHeight: 1.75, wheelchairMode: false, timewarpMode: false, shootDistance: 1, ballSpeed: 0, customMode: false, frequency: 3.6};
+var soccerPenaltyControls = {adaptiveDifficulty: true, level: 1, maxHeight: 1.75, wheelchairMode: false, timewarpMode: false, shootDistance: 1, ballSpeed: 0, difficultyLevel: 1, frequency: 3.6};
 var soccerPenaltyIsPaused = true;
 
 // open the database
@@ -95,6 +95,14 @@ var appRouter = function (app) {
 
     console.log(req.body.value);
     soccerPenaltyControls.level = req.body.value;
+    console.log(soccerPenaltyControls);
+    eventEmitter.emit('setSoccerPenaltyControls');
+    res.end("ok");
+  });
+  app.post('/api/soccerPenalty/current/setDifficultyLevel', function (req, res) {
+
+    console.log(req.body.value);
+    soccerPenaltyControls.difficultyLevel = req.body.value;
     console.log(soccerPenaltyControls);
     eventEmitter.emit('setSoccerPenaltyControls');
     res.end("ok");
