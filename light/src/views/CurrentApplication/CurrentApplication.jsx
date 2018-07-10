@@ -1,10 +1,11 @@
 import React, { Component } from "react";
-import { Grid, Row, Col, DropdownButton, MenuItem, FormGroup, ControlLabel, FormControl } from "react-bootstrap";
+import { Grid, Row, Col, DropdownButton, MenuItem, FormGroup, ControlLabel, FormControl} from "react-bootstrap";
 import Websocket from 'react-websocket';
 
 import Card from "components/Card/Card.jsx";
 import Button from "components/CustomButton/CustomButton.jsx";
 import Checkbox from "components/CustomCheckbox/CustomCheckbox.jsx";
+import Radio from "components/CustomRadio/CustomRadio.jsx";
 
 import {ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, Label} from "recharts";
 
@@ -20,7 +21,7 @@ var availableGames = ['soccerpenalty', 'Bridge', 'Stadium', 'StadiumPenalty', 'S
 
 class CurrentApplication extends Component{
 //  state = {bubbleChart:{catches: [{x: 0, h: 2, s: 200}, {x: 0.38, h: 1, s: 260}, {x: 2.4792, h: 1.3, s: 400}, {x: 3.56, h: 1.25, s: 280}, {x: 1.34, h: 0.5, s: 500}, {x: 4, h: 1.8, s: 200}], goals: [{x: 3.5, h: 0.6, s: 240}, {x: 1.5, h: 0.9, s: 220}, {x: 0.5, h: 1.4, s: 250}, {x: 2.5, h: 0.5, s: 210}, {x: 2.9, h: 1.6, s: 260}, {x: 1.2, h: 0.4, s: 230}]}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}};
-    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3};
+    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: false, difficulty: 2, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, paused: true};
 
     handleMouseDown(e){
         chartstatus = 'down';
@@ -188,7 +189,6 @@ class CurrentApplication extends Component{
               body: JSON.stringify({currentGame: this.state.currentGame, currentPatient: this.state.currentPatient.PatientId}),
               })
               .then((response) => {
-    //              console.log(response);
               })
               .catch(error => console.error('Error:', error));
             this.setState({startMenu: 'hidden'});
@@ -198,13 +198,133 @@ class CurrentApplication extends Component{
         }
     }
 
+    quitGame(){
+        fetch('/api/soccerPenalty/killApplication', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({currentGame: this.state.currentGame, currentPatient: this.state.currentPatient.PatientId}),
+          })
+          .then((response) => {
+          })
+          .catch(error => console.error('Error:', error));
+    }
+
+    setPaused(){
+        const paused = this.state.paused;
+        this.setState({paused: !paused});
+        fetch('/api/soccerPenalty/current/setPaused', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({value: !paused}),
+          })
+          .then((response) => {
+          })
+          .catch(error => console.error('Error:', error));
+    }
+
     handleLevelChange(e){
         const level = parseInt(e.target.value);
         if(level>=0 && level<=10){
             this.setState({ level: e.target.value });
+            fetch('/api/soccerPenalty/current/setLevel', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({value: level}),
+              })
+              .then((response) => {
+              })
+              .catch(error => console.error('Error:', error));
+        }
+    }
+
+    changeAdaptiveDifficulty(){
+        const ad = this.state.adaptiveDifficulty;
+        this.setState({adaptiveDifficulty: !ad});
+        fetch('/api/soccerPenalty/current/setAdaptiveDifficulty', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({value: !ad}),
+          })
+          .then((response) => {
+          })
+          .catch(error => console.error('Error:', error));
+        
+    }
+
+    handleDifficultyChange(e){
+        const difficulty = e.target.value;
+        if(this.state.difficulty!=difficulty){
+            this.setState({ difficulty: difficulty});
+            fetch('/api/soccerPenalty/current/setDifficultyLevel', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({value: difficulty}),
+              })
+              .then((response) => {
+              })
+              .catch(error => console.error('Error:', error));
         }
     }
     
+     changeShootDistance(e){
+         const sd = this.state.shootDistance;
+         this.setState({ shootDistance: e.target.value});
+         fetch('/api/soccerPenalty/current/setShootDistance', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({value: sd}),
+          })
+          .then((response) => {
+          })
+          .catch(error => console.error('Error:', error));
+        
+    }
+    
+    changeBallSpeed(e){
+         const bs = this.state.ballSpeed;
+         this.setState({ ballSpeed: e.target.value});
+         fetch('/api/soccerPenalty/current/setBallSpeed', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({value: bs}),
+          })
+          .then((response) => {
+          })
+          .catch(error => console.error('Error:', error));
+        
+    }
+    
+    changeMaxHeight(e){
+         const mh = this.state.maxHeight;
+         this.setState({ maxHeight: e.target.value});
+         fetch('/api/soccerPenalty/current/setMaximumHeight', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({value: mh}),
+          })
+          .then((response) => {
+          })
+          .catch(error => console.error('Error:', error));
+        
+    }
+
+
   componentDidMount(){
     fetch('/patients', {
       method: 'GET',
@@ -298,12 +418,12 @@ class CurrentApplication extends Component{
           <form>
               <Row>
                   <Col md={6}>
-                      <Button bsStyle="info" fill>
+                      <Button bsStyle="info" fill onClick={this.setPaused.bind(this)}>
                           Play/Pause
                       </Button>
                   </Col>
                   <Col md={6}>
-                      <Button bsStyle="info" pullRight fill>
+                      <Button bsStyle="info" pullRight fill onClick={this.quitGame.bind(this)}>
                           Quit Game
                       </Button>
                   </Col>
@@ -317,13 +437,11 @@ class CurrentApplication extends Component{
                               <div>
                                   <Row>
                                       <Col md={6} className="topMargin">
-                                          <Checkbox isChecked={false} label='Adaptive Difficulty' number={1}>
+                                          <Checkbox label='Adaptive Difficulty' number={4} onClick={this.changeAdaptiveDifficulty.bind(this)}>
                                           </Checkbox>
                                       </Col>
                                       <Col md={6}>
-                                          <FormGroup
-                                              controlId="formBasicNumber"
-                                            >
+                                          <FormGroup>
                                               <ControlLabel>Select level</ControlLabel>
                                               <FormControl
                                                 type="number"
@@ -335,23 +453,33 @@ class CurrentApplication extends Component{
                                   </Row>
                                   <Row>
                                       <Col md={12}>
-                                          <Button>
-                                              Easy
-                                          </Button>
-                                          <Button>
-                                              Medium
-                                          </Button>
-                                          <Button>
-                                              Hard
-                                          </Button>
-                                          <Button>
-                                              Custom
-                                          </Button>
+                                          <FormGroup>
+                                              <Radio name="radioGroup" value={0} label="Easy" number={0} onClick={this.handleDifficultyChange.bind(this)}>
+                                              </Radio>
+                                              <Radio name="radioGroup" value={1} label="Medium" number={1} onClick={this.handleDifficultyChange.bind(this)}>
+                                              </Radio>
+                                              <Radio name="radioGroup" value={2} label="Hard" number={2} onClick={this.handleDifficultyChange.bind(this)}>
+                                              </Radio>
+                                              <Radio name="radioGroup" value={3} label="Custom" number={3} onClick={this.handleDifficultyChange.bind(this)}>
+                                              </Radio>
+                                          </FormGroup>
                                       </Col>
                                   </Row>
                               </div>
                           }
                           />
+                  </Col>
+                  <Col md={5}>
+                      <FormGroup>
+                          <ControlLabel>Maximum height</ControlLabel>
+                          <FormControl
+                              type="range"
+                              min={0.2}
+                              max={2.0}
+                              value={this.state.maxHeight}
+                              onChange={this.changeMaxHeight.bind(this)}
+                          />
+                      </FormGroup>
                   </Col>
               </Row>
               <Row>
@@ -360,7 +488,34 @@ class CurrentApplication extends Component{
                           title="Custom"
                           ctTableResponsive
                           content={
-                                  <div></div>
+                              <div>
+                                  <Row>
+                                      <Col md={6}>
+                                          <FormGroup>
+                                              <ControlLabel>Shoot distance</ControlLabel>
+                                              <FormControl
+                                                  type="range"
+                                                  min={0}
+                                                  max={10}
+                                                  value={this.state.shootDistance}
+                                                  onChange={this.changeShootDistance.bind(this)}
+                                              />
+                                          </FormGroup>
+                                      </Col>
+                                      <Col md={6}>
+                                          <FormGroup>
+                                              <ControlLabel>Ball speed</ControlLabel>
+                                              <FormControl
+                                                  type="range"
+                                                  min={1}
+                                                  max={40}
+                                                  value={this.state.ballSpeed}
+                                                  onChange={this.changeBallSpeed.bind(this)}
+                                              />
+                                          </FormGroup>
+                                      </Col>
+                                  </Row>
+                              </div>
                           }
                           />
                   </Col>
