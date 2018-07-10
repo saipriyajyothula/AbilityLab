@@ -100,13 +100,34 @@ var appRouter = function (app) {
     res.end("ok");
   });
   app.post('/api/soccerPenalty/current/setDifficultyLevel', function (req, res) {
-
     console.log(req.body.value);
     soccerPenaltyControls.difficultyLevel = req.body.value;
     console.log(soccerPenaltyControls);
     eventEmitter.emit('setSoccerPenaltyControls');
     res.end("ok");
   });
+  app.post('/api/soccerPenalty/current/setMaximumHeight', function (req, res) {
+    console.log(req.body.value);
+    soccerPenaltyControls.maxHeight = req.body.value;
+    console.log(soccerPenaltyControls);
+    eventEmitter.emit('setSoccerPenaltyControls');
+    res.end("ok");
+  });
+  app.post('/api/soccerPenalty/current/setBallSpeed', function (req, res) {
+    console.log(req.body.value);
+    soccerPenaltyControls.ballSpeed = req.body.value;
+    console.log(soccerPenaltyControls);
+    eventEmitter.emit('setSoccerPenaltyControls');
+    res.end("ok");
+  });
+  app.post('/api/soccerPenalty/current/setShootDistance', function (req, res) {
+    console.log(req.body.value);
+    soccerPenaltyControls.shootDistance = req.body.value;
+    console.log(soccerPenaltyControls);
+    eventEmitter.emit('setSoccerPenaltyControls');
+    res.end("ok");
+  });
+
 
   app.post('/api/soccerPenalty/current/setPaused', function (req, res) {
 
