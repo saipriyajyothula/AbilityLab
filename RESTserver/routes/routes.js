@@ -127,6 +127,21 @@ var appRouter = function (app) {
     eventEmitter.emit('setSoccerPenaltyControls');
     res.end("ok");
   });
+  app.post('/api/soccerPenalty/current/setTimeWarpMode', function (req, res) {
+    console.log(req.body.value);
+    soccerPenaltyControls.timewarpMode = req.body.value;
+    console.log(soccerPenaltyControls);
+    eventEmitter.emit('setSoccerPenaltyControls');
+    res.end("ok");
+  });
+  app.post('/api/soccerPenalty/current/setWheelchairMode', function (req, res) {
+    console.log(req.body.value);
+    soccerPenaltyControls.wheelchairMode = req.body.value;
+    console.log(soccerPenaltyControls);
+    eventEmitter.emit('setSoccerPenaltyControls');
+    res.end("ok");
+  });
+
 
 
   app.post('/api/soccerPenalty/current/setPaused', function (req, res) {
