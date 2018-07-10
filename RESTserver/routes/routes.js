@@ -91,6 +91,14 @@ var appRouter = function (app) {
     eventEmitter.emit('setSoccerPenaltyControls');
     res.end("ok");
   });
+  app.post('/api/soccerPenalty/current/setLevel', function (req, res) {
+
+    console.log(req.body.value);
+    soccerPenaltyControls.level = req.body.value;
+    console.log(soccerPenaltyControls);
+    eventEmitter.emit('setSoccerPenaltyControls');
+    res.end("ok");
+  });
 
   app.post('/api/soccerPenalty/current/setPaused', function (req, res) {
 
