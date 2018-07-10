@@ -17,7 +17,7 @@ var chartFlag = false;
 
 var chartPoint = {x1: 0, y1: 0, x2: 0, y2: 0};
 
-var availableGames = ['soccerpenalty', 'Bridge', 'Stadium', 'StadiumPenalty', 'StadiumPenaltyLeap'];
+var availableGames = ['soccerpenalty', 'SoccerPenalty', 'Bridge', 'Stadium', 'StadiumPenalty', 'StadiumPenaltyLeap'];
 
 class CurrentApplication extends Component{
 //  state = {bubbleChart:{catches: [{x: 0, h: 2, s: 200}, {x: 0.38, h: 1, s: 260}, {x: 2.4792, h: 1.3, s: 400}, {x: 3.56, h: 1.25, s: 280}, {x: 1.34, h: 0.5, s: 500}, {x: 4, h: 1.8, s: 200}], goals: [{x: 3.5, h: 0.6, s: 240}, {x: 1.5, h: 0.9, s: 220}, {x: 0.5, h: 1.4, s: 250}, {x: 2.5, h: 0.5, s: 210}, {x: 2.9, h: 1.6, s: 260}, {x: 1.2, h: 0.4, s: 230}]}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}};
