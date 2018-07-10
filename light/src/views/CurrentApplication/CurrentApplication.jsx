@@ -1,10 +1,8 @@
 import React, { Component } from "react";
-import { Grid, Row, Col, DropdownButton, MenuItem, FormGroup, ControlLabel, FormControl } from "react-bootstrap";
+import { Grid, Row, Col } from "react-bootstrap";
 import Websocket from 'react-websocket';
 
 import Card from "components/Card/Card.jsx";
-import Button from "components/CustomButton/CustomButton.jsx";
-import Checkbox from "components/CustomCheckbox/CustomCheckbox.jsx";
 
 import {ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, Label} from "recharts";
 
@@ -16,11 +14,9 @@ var chartFlag = false;
 
 var chartPoint = {x1: 0, y1: 0, x2: 0, y2: 0};
 
-var availableGames = ['soccerpenalty', 'Bridge', 'Stadium', 'StadiumPenalty', 'StadiumPenaltyLeap'];
-
 class CurrentApplication extends Component{
 //  state = {bubbleChart:{catches: [{x: 0, h: 2, s: 200}, {x: 0.38, h: 1, s: 260}, {x: 2.4792, h: 1.3, s: 400}, {x: 3.56, h: 1.25, s: 280}, {x: 1.34, h: 0.5, s: 500}, {x: 4, h: 1.8, s: 200}], goals: [{x: 3.5, h: 0.6, s: 240}, {x: 1.5, h: 0.9, s: 220}, {x: 0.5, h: 1.4, s: 250}, {x: 2.5, h: 0.5, s: 210}, {x: 2.9, h: 1.6, s: 260}, {x: 1.2, h: 0.4, s: 230}]}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}};
-    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3};
+    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}};
 
     handleMouseDown(e){
         chartstatus = 'down';
@@ -117,108 +113,6 @@ class CurrentApplication extends Component{
     this.setState({bubbleChart: {catches: result.catches, goals: result.goals}});
   }
 
-  createDropDown(title, i, data){
-        let menulist = [];
-        if(data=='patients'){
-            if(this.state.hasOwnProperty("patients")){
-                data = this.state.patients;
-            }
-            else{
-                data = [];
-            }
-            for(var j=0; j<data.length; j++){
-                menulist.push(<MenuItem key={data[j].PatientId} eventKey={data[j]}>{data[j].FirstName + " " + data[j].LastName}</MenuItem>);
-            }
-            return (
-                <DropdownButton  
-                    title={this.state.currentPatient.FirstName + " " + this.state.currentPatient.LastName}
-                    key={i}
-                    id={`dropdown-basic-${i}`} onSelect={this.dropSelect.bind(this)}>
-                    {menulist}
-                </DropdownButton>);
-        }
-        else if(data=='games'){
-            data = availableGames;
-            for(var j=0; j<data.length; j++){
-                menulist.push(<MenuItem key={data[j]} eventKey={{'selectedGame': data[j]}}>{data[j]}</MenuItem>);
-            }
-            return (
-                <DropdownButton  
-                    title={this.state.currentGame}
-                    key={i}
-                    id={`dropdown-basic-${i}`} onSelect={this.dropSelect.bind(this)}>
-                    {menulist}
-                </DropdownButton>);
-        }
-        else{
-            for(var j=0; j<data.length; j++){
-                menulist.push(<MenuItem key={data[j]} eventKey={data[j]}>{data[j]}</MenuItem>);
-            }
-            return (
-                <DropdownButton  
-                    title={title}
-                    key={i}
-                    id={`dropdown-basic-${i}`} onSelect={this.dropSelect.bind(this)}>
-                    {menulist}
-                </DropdownButton>);
-        }
-        
-    }
-
-    dropSelect(e, evt){
-        if(e.hasOwnProperty('PatientId')){
-            this.setState({currentPatient: e});
-        }
-        else if(e.hasOwnProperty('selectedGame')){
-            this.setState({currentGame: (e.selectedGame)});
-        }
-        else{
-            console.log(e);
-        }
-//        console.log(evt.target);
-    }
-
-    launchGame(){
-        if((this.state.currentGame!= 'Select game')&&(this.state.currentPatient!= 'Select patient name')){
-            fetch('/api/soccerPenalty/launchApplication', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({currentGame: this.state.currentGame, currentPatient: this.state.currentPatient.PatientId}),
-              })
-              .then((response) => {
-    //              console.log(response);
-              })
-              .catch(error => console.error('Error:', error));
-            this.setState({startMenu: 'hidden'});
-        }
-        else{
-            console.log('error');
-        }
-    }
-
-    handleLevelChange(e){
-        const level = parseInt(e.target.value);
-        if(level>=0 && level<=10){
-            this.setState({ level: e.target.value });
-        }
-    }
-    
-  componentDidMount(){
-    fetch('/patients', {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-    .then((response) => response.json())
-    .then((patients) => {
-      this.setState({patients: patients});
-    });
-  }
-
   render() {
     return (
       <div className="content">
@@ -227,34 +121,6 @@ class CurrentApplication extends Component{
       onMessage={this.handleData.bind(this)}
       />
       <Grid fluid>
-      <Row>
-      <Col md={12}>
-      <Card
-      display={this.state.startMenu}
-      title="Start Menu"
-      ctTableResponsive
-      content={   
-            <form>
-                      <Row>
-                          <Col md={3}>
-                              {this.createDropDown('Select patient name', 1, 'patients')}
-                          </Col>
-                          <Col md={3}>
-                              {this.createDropDown('Select game', 2, 'games')}
-                          </Col>
-                          <Col md={2}>
-                              <Button bsStyle="info" fill onClick={this.launchGame.bind(this)}>
-                                  Launch game
-                              </Button>
-                          </Col>
-                      </Row>
-                 
-            </form>
-      }
-      />
-      </Col>
-      </Row>
-          
       <Row>
       <Col md={12}>
       <Card
@@ -267,9 +133,7 @@ class CurrentApplication extends Component{
             <ResponsiveContainer width="100%" height={500} className="chartContainer">
             <ScatterChart margin={{top: 20, right: 20, bottom: 20, left: 0}} onMouseDown={this.handleMouseDown.bind(this)} onMouseUp={this.handleMouseUp.bind(this)} onMouseMove={this.handleMouseMove.bind(this)}>
                 <XAxis type="number" dataKey={'x'} name='X-Position' domain={[0, 4]} ticks={[0, 1, 2, 3, 4]}>
-                <Label value="X-Position" offset={-5} position="insideBottom"/>
-                <Label value="Player's right" offset={-5} position="insideBottomLeft"/>
-                <Label value="Player's left" offset={-5} position="insideBottomRight"/>
+                <Label value="X-Position" position="insideBottom"/>
                 </XAxis>
                 <YAxis type="number" domain={[0, 2]} ticks={[0, 0.5, 1, 1.5, 2]} dataKey={'h'} name='Height'>
                 <Label value="Height" angle={-90} offset={25} position="insideLeft"/>
@@ -277,7 +141,7 @@ class CurrentApplication extends Component{
                 <ZAxis dataKey={'s'} range={[100, 800]} name='Speed'/>
                 <CartesianGrid />
                 <Tooltip cursor={{strokeDasharray: '3 3'}}/>
-                <Legend align='right' verticalAlign='top' height={25}/>
+                <Legend align='right'/>
                 <Scatter name='Save' data={this.state.bubbleChart.catches} fill='#4cdb2b' opacity= {0.7}/>
                 <Scatter name='Miss' data={this.state.bubbleChart.goals} fill='#ff002e' opacity={0.7}/>
             </ScatterChart>
@@ -288,90 +152,6 @@ class CurrentApplication extends Component{
       </Col>
 
       </Row>
-          
-      <Row>
-      <Col md={12}>
-      <Card
-      title="Game Controls"
-      ctTableResponsive
-      content={
-          <form>
-              <Row>
-                  <Col md={6}>
-                      <Button bsStyle="info" fill>
-                          Play/Pause
-                      </Button>
-                  </Col>
-                  <Col md={6}>
-                      <Button bsStyle="info" pullRight fill>
-                          Quit Game
-                      </Button>
-                  </Col>
-              </Row>
-              <Row>
-                  <Col md={7}>
-                      <Card
-                          title="Level"
-                          ctTableResponsive
-                          content={
-                              <div>
-                                  <Row>
-                                      <Col md={6} className="topMargin">
-                                          <Checkbox isChecked={false} label='Adaptive Difficulty' number={1}>
-                                          </Checkbox>
-                                      </Col>
-                                      <Col md={6}>
-                                          <FormGroup
-                                              controlId="formBasicNumber"
-                                            >
-                                              <ControlLabel>Select level</ControlLabel>
-                                              <FormControl
-                                                type="number"
-                                                value={this.state.level}
-                                                onChange={this.handleLevelChange.bind(this)}
-                                              />
-                                            </FormGroup>
-                                      </Col>
-                                  </Row>
-                                  <Row>
-                                      <Col md={12}>
-                                          <Button>
-                                              Easy
-                                          </Button>
-                                          <Button>
-                                              Medium
-                                          </Button>
-                                          <Button>
-                                              Hard
-                                          </Button>
-                                          <Button>
-                                              Custom
-                                          </Button>
-                                      </Col>
-                                  </Row>
-                              </div>
-                          }
-                          />
-                  </Col>
-              </Row>
-              <Row>
-                  <Col md={7}>
-                      <Card
-                          title="Custom"
-                          ctTableResponsive
-                          content={
-                                  <div></div>
-                          }
-                          />
-                  </Col>
-              </Row>
-          </form>
-      }
-      />
-      </Col>
-
-      </Row>
-          
       </Grid>
       </div>
     );
