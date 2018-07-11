@@ -85,59 +85,71 @@ var appRouter = function (app) {
 
   app.post('/api/soccerPenalty/current/setAdaptiveDifficulty', function (req, res) {
 
-    console.log(req.body.value);
+    //console.log(req.body.value);
     soccerPenaltyControls.adaptiveDifficulty = req.body.value;
-    console.log(soccerPenaltyControls);
+    //console.log(soccerPenaltyControls);
     eventEmitter.emit('setSoccerPenaltyControls');
     res.end("ok");
   });
   app.post('/api/soccerPenalty/current/setLevel', function (req, res) {
 
-    console.log(req.body.value);
+    //console.log(req.body.value);
     soccerPenaltyControls.level = req.body.value;
-    console.log(soccerPenaltyControls);
+    //console.log(soccerPenaltyControls);
     eventEmitter.emit('setSoccerPenaltyControls');
     res.end("ok");
   });
   app.post('/api/soccerPenalty/current/setDifficultyLevel', function (req, res) {
-    console.log(req.body.value);
+    //console.log(req.body.value);
     soccerPenaltyControls.difficultyLevel = req.body.value;
-    console.log(soccerPenaltyControls);
+    if (soccerPenaltyControls.difficultyLevel == 0)
+    {
+      soccerPenaltyControls.level = 1;
+    }
+    if (soccerPenaltyControls.difficultyLevel == 1)
+    {
+      soccerPenaltyControls.level = 5;
+    }
+    if (soccerPenaltyControls.difficultyLevel == 2)
+    {
+      soccerPenaltyControls.level = 9;
+    }
+    //console.log(soccerPenaltyControls);
     eventEmitter.emit('setSoccerPenaltyControls');
     res.end("ok");
   });
   app.post('/api/soccerPenalty/current/setMaximumHeight', function (req, res) {
-    console.log(req.body.value);
+    //console.log(req.body.value);
     soccerPenaltyControls.maxHeight = req.body.value;
-    console.log(soccerPenaltyControls);
+    //console.log(soccerPenaltyControls);
     eventEmitter.emit('setSoccerPenaltyControls');
     res.end("ok");
   });
   app.post('/api/soccerPenalty/current/setBallSpeed', function (req, res) {
-    console.log(req.body.value);
+    //console.log(req.body.value);
     soccerPenaltyControls.ballSpeed = req.body.value;
-    console.log(soccerPenaltyControls);
+    //console.log(soccerPenaltyControls);
     eventEmitter.emit('setSoccerPenaltyControls');
     res.end("ok");
   });
   app.post('/api/soccerPenalty/current/setShootDistance', function (req, res) {
-    console.log(req.body.value);
+    //console.log(req.body.value);
     soccerPenaltyControls.shootDistance = req.body.value;
-    console.log(soccerPenaltyControls);
+    //console.log(soccerPenaltyControls);
     eventEmitter.emit('setSoccerPenaltyControls');
     res.end("ok");
   });
   app.post('/api/soccerPenalty/current/setTimeWarpMode', function (req, res) {
-    console.log(req.body.value);
+    //console.log(req.body.value);
     soccerPenaltyControls.timewarpMode = req.body.value;
-    console.log(soccerPenaltyControls);
+    //console.log(soccerPenaltyControls);
     eventEmitter.emit('setSoccerPenaltyControls');
     res.end("ok");
   });
   app.post('/api/soccerPenalty/current/setWheelchairMode', function (req, res) {
-    console.log(req.body.value);
+    //console.log(req.body.value);
     soccerPenaltyControls.wheelchairMode = req.body.value;
-    console.log(soccerPenaltyControls);
+    //console.log(soccerPenaltyControls);
     eventEmitter.emit('setSoccerPenaltyControls');
     res.end("ok");
   });
@@ -197,12 +209,12 @@ var appRouter = function (app) {
     console.log("spawn app");
     var appPath;
     if(path.join(__dirname, '../').slice(0, 7)=='/Users/'){
-        appPath = path.join(__dirname, ('../applications/'+req.body.currentGame+'.app/Contents/MacOS/'+req.body.currentGame)); 
+      appPath = path.join(__dirname, ('../applications/'+req.body.currentGame+'.app/Contents/MacOS/'+req.body.currentGame));
     }
     else{
-        appPath = path.join(__dirname, ('../applications/'+req.body.currentGame+'.exe')); 
+      appPath = path.join(__dirname, ('../applications/'+req.body.currentGame+'.exe'));
     }
-    
+
     application = spawn(appPath, [req.body.currentPatient]);
     application.on('close', console.log.bind(console, 'closed'));
     res.end("ok");
@@ -254,7 +266,27 @@ var appRouter = function (app) {
 
     ws.on('message', function(msg) {
       console.log(msg);
+      var message = JSON.parse(msg);
+
       ws.send("received");
+      if(message.message == "levelChanged"){
+        soccerPenaltyControls.level = message.data;
+        console.log(soccerPenaltyControls.level);
+        //update the difficulty level
+        if (soccerPenaltyControls.level <= 3)
+        {
+          soccerPenaltyControls.difficultyLevel = 0; //easy
+        }else
+        if (soccerPenaltyControls.level <= 6)
+        {
+          soccerPenaltyControls.difficultyLevel = 1; //medium
+        }else
+        if (soccerPenaltyControls.level > 6)
+        {
+          soccerPenaltyControls.difficultyLevel = 2; //hard
+        }
+        console.log("difficulty: " + soccerPenaltyControls.difficultyLevel);
+      }
     });
     ws.on('close', function() {
       console.log('closed');
