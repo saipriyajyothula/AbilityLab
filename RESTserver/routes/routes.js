@@ -300,7 +300,7 @@ var appRouter = function (app) {
       console.log('closed');
       eventEmitter.removeListener('sendApplicationQuit', list2 );
       eventEmitter.removeListener('setChartRect', list3 );
-      eventEmitter.removeListener('setSoccerPenaltyControls', updateSoccerPenaltyControls );
+      eventEmitter.removeListener('setSoccerPenaltyControls', updateSoccerPenaltyControlsTimeouted );
       eventEmitter.removeListener('setSoccerPenaltyPlayPause', updateSoccerPlayPause );
     });
     var list2 = function(){
@@ -309,6 +309,12 @@ var appRouter = function (app) {
 
     var list3 = function(){
       ws.send(JSON.stringify({message: "rectangle",data: chartPoint}));
+    }
+
+    var updateFunc;
+    var updateSoccerPenaltyControlsTimeouted = function(){
+      clearTimeout(updateFunc);
+      updateFunc = setTimeout(updateSoccerPenaltyControls, 1000);
     }
     var updateSoccerPenaltyControls = function(){
       ws.send(JSON.stringify({message: "control",data: soccerPenaltyControls}));
@@ -319,7 +325,7 @@ var appRouter = function (app) {
     }
     eventEmitter.on('sendApplicationQuit', list2 );
     eventEmitter.on('setChartRect', list3 );
-    eventEmitter.on('setSoccerPenaltyControls', updateSoccerPenaltyControls );
+    eventEmitter.on('setSoccerPenaltyControls', updateSoccerPenaltyControlsTimeouted );
     eventEmitter.on('setSoccerPenaltyPlayPause', updateSoccerPlayPause );
   });
 
