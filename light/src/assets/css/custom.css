@@ -1,8 +1,16 @@
 .chartContainer{
     background-image: url(../img/human.png);
     background-position-x: calc(50% + 20px);
-    background-position-y: -70px;
+    background-position-y: -60px;
     background-repeat: no-repeat;
+}
+
+.statContainer{
+    background-image: url(../img/human_mod.png);
+    background-position-x: calc(50% - 10px);
+    background-position-y: 50%;
+    background-repeat: no-repeat;
+    background-size: contain;
 }
 
 .mouseArea{

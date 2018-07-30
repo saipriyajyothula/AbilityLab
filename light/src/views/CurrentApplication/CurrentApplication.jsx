@@ -8,7 +8,7 @@ import Checkbox from "components/CustomCheckbox/CustomCheckbox.jsx";
 import Radio from "components/CustomRadio/CustomRadio.jsx";
 import Slider from "components/CustomSlider/CustomSlider.jsx";
 
-import {ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, Label} from "recharts";
+import {ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, Label, LabelList} from "recharts";
 
 //import $ from "jquery";
 
@@ -22,7 +22,7 @@ var availableGames = ['soccerpenalty', 'SoccerPenalty', 'Bridge', 'Stadium', 'St
 
 class CurrentApplication extends Component{
 //  state = {bubbleChart:{catches: [{x: 0, h: 2, s: 200}, {x: 0.38, h: 1, s: 260}, {x: 2.4792, h: 1.3, s: 400}, {x: 3.56, h: 1.25, s: 280}, {x: 1.34, h: 0.5, s: 500}, {x: 4, h: 1.8, s: 200}], goals: [{x: 3.5, h: 0.6, s: 240}, {x: 1.5, h: 0.9, s: 220}, {x: 0.5, h: 1.4, s: 250}, {x: 2.5, h: 0.5, s: 210}, {x: 2.9, h: 1.6, s: 260}, {x: 1.2, h: 0.4, s: 230}]}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}};
-    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: false, difficulty: 2, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, paused: true, gameControls: 'hidden'};
+    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: true, difficulty: 2, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, paused: true, gameControls: 'visible', volume: 100, customMenu: 'hidden', timeWarp: false, wheelchairMode: false, bridgeStats: {playerDamage: 5, dragonDamage: 6, dodges: 4, leftShield: {miss: [{x: 3, y: 1.3, z: 1, value: 3}], hit: [{x: 3.5, y: 1.3, z: 1, value: 2}]}, rightShield: {miss: [{x: 0.5, y: 1.3, z: 1, value: 3}], hit: [{x: 1, y: 1.3, z: 1, value: 1}]}, leftFoot: {miss: [{x: 3, y: 1.5, z: 1, value: 3}], hit: [{x: 3.5, y: 1.5, z: 1, value: 2}]}, rightFoot: {miss: [{x: 0.5, y: 1.5, z: 1, value: 3}], hit: [{x: 1, y: 1.5, z: 1, value: 1}]}}};
 
     handleMouseDown(e){
         chartstatus = 'down';
@@ -118,6 +118,12 @@ class CurrentApplication extends Component{
 //    console.log(result);
     this.setState({bubbleChart: {catches: result.catches, goals: result.goals}});
   }
+
+    generateTooltip(value){
+        return <div className="custom-tooltip">
+          <p className="desc">Hello</p>
+        </div>;
+    }
 
   createDropDown(title, i, data){
         let menulist = [];
@@ -249,6 +255,14 @@ class CurrentApplication extends Component{
     changeAdaptiveDifficulty(){
         const ad = this.state.adaptiveDifficulty;
         this.setState({adaptiveDifficulty: !ad});
+        if(!ad){
+            this.setState({customMenu: 'hidden'});
+        }
+        else{
+            if(this.state.difficulty==3){
+                this.setState({customMenu: 'visible'});
+            }
+        }
         fetch('/api/soccerPenalty/current/setAdaptiveDifficulty', {
           method: 'POST',
           headers: {
@@ -265,6 +279,12 @@ class CurrentApplication extends Component{
     handleDifficultyChange(e){
         const difficulty = e.target.value;
         if(this.state.difficulty!=difficulty){
+            if(difficulty==3){
+                this.setState({customMenu: 'visible'});
+            }
+            else{
+                this.setState({customMenu: 'hidden'});
+            }
             this.setState({ difficulty: difficulty});
             fetch('/api/soccerPenalty/current/setDifficultyLevel', {
               method: 'POST',
@@ -320,6 +340,54 @@ class CurrentApplication extends Component{
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({value: mh}),
+          })
+          .then((response) => {
+          })
+          .catch(error => console.error('Error:', error));
+        
+    }
+
+    changeVolume(e){
+         const v = this.state.volume;
+         this.setState({ volume: e.target.value});
+//         fetch('/api/soccerPenalty/current/setVolume', {
+//          method: 'POST',
+//          headers: {
+//            'Content-Type': 'application/json',
+//          },
+//          body: JSON.stringify({value: v}),
+//          })
+//          .then((response) => {
+//          })
+//          .catch(error => console.error('Error:', error));
+        
+    }
+
+    changeWheelchairMode(){
+        const wc = this.state.wheelchairMode;
+        this.setState({wheelchairMode: !wc});
+        fetch('/api/soccerPenalty/current/setWheelchairMode', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({value: !wc}),
+          })
+          .then((response) => {
+          })
+          .catch(error => console.error('Error:', error));
+        
+    }
+
+    changeTimeWarp(){
+        const tw = this.state.timeWarp;
+        this.setState({timeWarp: !tw});
+        fetch('/api/soccerPenalty/current/setTimeWarpMode', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({value: !tw}),
           })
           .then((response) => {
           })
@@ -383,6 +451,7 @@ class CurrentApplication extends Component{
       <Card
       title="Application In Use"
       category="Soccer Penalty"
+      display={'visible'}
       ctTableFullWidth
       ctTableResponsive
       content={
@@ -391,8 +460,8 @@ class CurrentApplication extends Component{
             <ScatterChart margin={{top: 20, right: 20, bottom: 20, left: 0}} onMouseDown={this.handleMouseDown.bind(this)} onMouseUp={this.handleMouseUp.bind(this)} onMouseMove={this.handleMouseMove.bind(this)}>
                 <XAxis type="number" dataKey={'x'} name='X-Position' domain={[0, 4]} ticks={[0, 1, 2, 3, 4]}>
                 <Label value="X-Position" offset={-5} position="insideBottom"/>
-                <Label value="Player's right" offset={-5} position="insideBottomLeft"/>
-                <Label value="Player's left" offset={-5} position="insideBottomRight"/>
+                <Label value="Player's left" offset={-5} position="insideBottomLeft"/>
+                <Label value="Player's right" offset={-5} position="insideBottomRight"/>
                 </XAxis>
                 <YAxis type="number" domain={[0, 2]} ticks={[0, 0.5, 1, 1.5, 2]} dataKey={'h'} name='Height'>
                 <Label value="Height" angle={-90} offset={25} position="insideLeft"/>
@@ -410,6 +479,74 @@ class CurrentApplication extends Component{
       />
       </Col>
 
+      <Col md={12}>
+      <Card
+      title="Application In Use"
+      category="Bridge"
+      display='visible'
+      ctTableResponsive
+      content={
+                  <Row>
+                  <Col md={8}>
+                      <Card
+                          title="Level"
+                          ctTableResponsive
+                          content={
+                              <div>
+                                  
+                              </div>
+                          }
+                        />
+                  </Col>
+                  <Col md={4}>
+                      <Card
+                          title="Player Statistics"
+                          ctTableResponsive
+                          content={
+                              <div>
+                                  <ResponsiveContainer width="100%" height={500} className="statContainer">
+            <ScatterChart margin={{top: 20, right: 20, bottom: 20, left: 0}}>
+                <XAxis type="number" dataKey={'x'} domain={[0, 4]} hide={true}>
+                </XAxis>
+                <YAxis type="number" domain={[0, 2]} dataKey={'y'} hide={true}>
+                </YAxis>
+                <ZAxis dataKey={'z'} range={[500, 500]} hide={true}/>
+                <Tooltip cursor={false} content={this.generateTooltip}/>
+                <Scatter name='Save' data={this.state.bridgeStats.rightShield.miss} fill='#4cdb2b' opacity= {0.7}>
+                    <LabelList dataKey="value" position="inside" fill ="#fff"/>
+                </Scatter>
+                <Scatter name='Miss' data={this.state.bridgeStats.rightShield.hit} fill='#2b4cdb' opacity= {0.7}>
+                    <LabelList dataKey="value" position="inside" fill ="#fff"/>
+                </Scatter>
+                <Scatter name='Save' data={this.state.bridgeStats.leftShield.miss} fill='#4cdb2b' opacity= {0.7}>
+                    <LabelList dataKey="value" position="inside" fill ="#fff"/>
+                </Scatter>
+                <Scatter name='Miss' data={this.state.bridgeStats.leftShield.hit} fill='#2b4cdb' opacity= {0.7}>
+                    <LabelList dataKey="value" position="inside" fill ="#fff"/>
+                </Scatter>
+                <Scatter name='Save' data={this.state.bridgeStats.rightFoot.miss} fill='#4cdb2b' opacity= {0.7}>
+                    <LabelList dataKey="value" position="inside" fill ="#fff"/>
+                </Scatter>
+                <Scatter name='Miss' data={this.state.bridgeStats.rightFoot.hit} fill='#2b4cdb' opacity= {0.7}>
+                    <LabelList dataKey="value" position="inside" fill ="#fff"/>
+                </Scatter>
+                <Scatter name='Save' data={this.state.bridgeStats.leftFoot.miss} fill='#4cdb2b' opacity= {0.7}>
+                    <LabelList dataKey="value" position="inside" fill ="#fff"/>
+                </Scatter>
+                <Scatter name='Miss' data={this.state.bridgeStats.leftFoot.hit} fill='#2b4cdb' opacity= {0.7}>
+                    <LabelList dataKey="value" position="inside" fill ="#fff"/>
+                </Scatter>
+            </ScatterChart>
+            </ResponsiveContainer>
+                              </div>
+                          }
+                        />                      
+                  </Col>
+              </Row>
+      }
+      />
+      </Col>  
+          
       </Row>
           
       <Row>
@@ -441,30 +578,31 @@ class CurrentApplication extends Component{
                               <div>
                                   <Row>
                                       <Col md={6} className="topMargin">
-                                          <Checkbox label='Adaptive Difficulty' number={4} onClick={this.changeAdaptiveDifficulty.bind(this)}>
+                                          <Checkbox label='Adaptive Difficulty' checked={this.state.adaptiveDifficulty} number={4} onClick={this.changeAdaptiveDifficulty.bind(this)}>
                                           </Checkbox>
                                       </Col>
                                       <Col md={6}>
                                           <FormGroup>
-                                              <ControlLabel>Select level</ControlLabel>
+                                              <ControlLabel>Select level (0-10)</ControlLabel>
                                               <FormControl
                                                 type="number"
                                                 value={this.state.level}
                                                 onChange={this.handleLevelChange.bind(this)}
+                                                disabled={this.state.adaptiveDifficulty}
                                               />
                                             </FormGroup>
                                       </Col>
                                   </Row>
                                   <Row>
                                       <Col md={12}>
-                                          <FormGroup>
-                                              <Radio name="radioGroup" value={0} label="Easy" number={0} onClick={this.handleDifficultyChange.bind(this)}>
+                                          <FormGroup value={this.state.level}>
+                                              <Radio name="radioGroup" value={0} label="Easy (Level 1)" number={0} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty}>
                                               </Radio>
-                                              <Radio name="radioGroup" value={1} label="Medium" number={1} onClick={this.handleDifficultyChange.bind(this)}>
+                                              <Radio name="radioGroup" value={1} label="Medium (Level 5)" number={1} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty}>
                                               </Radio>
-                                              <Radio name="radioGroup" value={2} label="Hard" number={2} onClick={this.handleDifficultyChange.bind(this)}>
+                                              <Radio name="radioGroup" value={2} label="Hard (Level 9)" number={2} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty} defaultChecked>
                                               </Radio>
-                                              <Radio name="radioGroup" value={3} label="Custom" number={3} onClick={this.handleDifficultyChange.bind(this)}>
+                                              <Radio name="radioGroup" value={3} label="Custom" number={3} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty}>
                                               </Radio>
                                           </FormGroup>
                                       </Col>
@@ -473,15 +611,34 @@ class CurrentApplication extends Component{
                           }
                           />
                   </Col>
+                  <Col md={3} className='topMargin'>
+                      <Checkbox label='Wheelchair mode' checked={this.state.wheelchairMode} number={5} onClick={this.changeWheelchairMode.bind(this)}>
+                      </Checkbox>
+                  </Col>
+                  <Col md={2} className='topMargin'>
+                      <Checkbox label='Time Warp' checked={this.state.timeWarp} number={6} onClick={this.changeTimeWarp.bind(this)}>
+                      </Checkbox>
+                  </Col>
                   <Col md={5}>
                       <Slider
                           label='Maximum height'
-                          number={5} 
+                          number={7} 
                           min={0.2}
                           max={2.0}
                           step={0.01}
                           value={this.state.maxHeight}
                           onChange={this.changeMaxHeight.bind(this)}>
+                      </Slider>
+                  </Col>
+                  <Col md={5}>
+                      <Slider
+                          label='Volume'
+                          number={8} 
+                          min={0}
+                          max={100}
+                          step={1}
+                          value={this.state.volume}
+                          onChange={this.changeVolume.bind(this)}>
                       </Slider>
                   </Col>
               </Row>
@@ -490,13 +647,14 @@ class CurrentApplication extends Component{
                       <Card
                           title="Custom"
                           ctTableResponsive
+                          display={this.state.customMenu}
                           content={
                               <div>
                                   <Row>
                                       <Col md={6}>
                                           <Slider
                                               label='Shoot distance'
-                                              number={6} 
+                                              number={9} 
                                               min={0}
                                               max={10}
                                               step={0.1}
@@ -507,7 +665,7 @@ class CurrentApplication extends Component{
                                       <Col md={6}>
                                           <Slider
                                               label='Ball speed'
-                                              number={7} 
+                                              number={10} 
                                               min={1} 
                                               max={40}
                                               step={0.5}
@@ -527,6 +685,131 @@ class CurrentApplication extends Component{
       </Col>
 
       </Row>
+
+      <Row>
+      <Col md={12}>
+      <Card
+      title="Game Controls"
+      display={'hidden'}
+      ctTableResponsive
+      content={
+          <form>
+              <Row>
+                  <Col md={7}>
+                      <Card
+                          title="Level"
+                          ctTableResponsive
+                          content={
+                              <div>
+                                  <Row>
+                                      <Col md={6} className="topMargin">
+                                          <Checkbox label='Adaptive Difficulty' checked={this.state.adaptiveDifficulty} number={4} onClick={this.changeAdaptiveDifficulty.bind(this)}>
+                                          </Checkbox>
+                                      </Col>
+                                      <Col md={6}>
+                                          <FormGroup>
+                                              <ControlLabel>Select level</ControlLabel>
+                                              <FormControl
+                                                type="number"
+                                                value={this.state.level}
+                                                onChange={this.handleLevelChange.bind(this)}
+                                                disabled={this.state.adaptiveDifficulty}
+                                              />
+                                            </FormGroup>
+                                      </Col>
+                                  </Row>
+                                  <Row>
+                                      <Col md={12}>
+                                          <FormGroup value={this.state.level}>
+                                              <Radio name="radioGroup" value={0} label="Easy (Level 1)" number={0} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty}>
+                                              </Radio>
+                                              <Radio name="radioGroup" value={1} label="Medium (Level 5)" number={1} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty}>
+                                              </Radio>
+                                              <Radio name="radioGroup" value={2} label="Hard (Level 9)" number={2} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty} defaultChecked>
+                                              </Radio>
+                                              <Radio name="radioGroup" value={3} label="Custom" number={3} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty}>
+                                              </Radio>
+                                          </FormGroup>
+                                      </Col>
+                                  </Row>
+                              </div>
+                          }
+                          />
+                  </Col>
+                  <Col md={3} className='topMargin'>
+                      <Checkbox label='Wheelchair mode' checked={this.state.wheelchairMode} number={5} onClick={this.changeWheelchairMode.bind(this)}>
+                      </Checkbox>
+                  </Col>
+                  <Col md={2} className='topMargin'>
+                      <Checkbox label='Time Warp' checked={this.state.timeWarp} number={6} onClick={this.changeTimeWarp.bind(this)}>
+                      </Checkbox>
+                  </Col>
+                  <Col md={5}>
+                      <Slider
+                          label='Maximum height'
+                          number={7} 
+                          min={0.2}
+                          max={2.0}
+                          step={0.01}
+                          value={this.state.maxHeight}
+                          onChange={this.changeMaxHeight.bind(this)}>
+                      </Slider>
+                  </Col>
+                  <Col md={5}>
+                      <Slider
+                          label='Volume'
+                          number={8} 
+                          min={0}
+                          max={100}
+                          step={1}
+                          value={this.state.volume}
+                          onChange={this.changeVolume.bind(this)}>
+                      </Slider>
+                  </Col>
+              </Row>
+              <Row>
+                  <Col md={7}>
+                      <Card
+                          title="Custom"
+                          ctTableResponsive
+                          display={this.state.customMenu}
+                          content={
+                              <div>
+                                  <Row>
+                                      <Col md={6}>
+                                          <Slider
+                                              label='Shoot distance'
+                                              number={9} 
+                                              min={0}
+                                              max={10}
+                                              step={0.1}
+                                              value={this.state.shootDistance}
+                                              onChange={this.changeShootDistance.bind(this)}>
+                                          </Slider>
+                                      </Col>
+                                      <Col md={6}>
+                                          <Slider
+                                              label='Ball speed'
+                                              number={10} 
+                                              min={1} 
+                                              max={40}
+                                              step={0.5}
+                                              value={this.state.ballSpeed}
+                                              onChange={this.changeBallSpeed.bind(this)}>
+                                          </Slider>
+                                      </Col>
+                                  </Row>
+                              </div>
+                          }
+                          />
+                  </Col>
+              </Row>
+          </form>
+      }
+      />
+      </Col>
+
+      </Row>          
           
       </Grid>
       </div>
