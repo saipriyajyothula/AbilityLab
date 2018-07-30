@@ -8,7 +8,7 @@ const path = require('path');
 
 var chartPoint = {x1: 0, y1: 0, x2: 0, y2: 0};
 
-var soccerPenaltyControls = {adaptiveDifficulty: true, level: 1, maxHeight: 1.75, wheelchairMode: false, timewarpMode: false, shootDistance: 1, ballSpeed: 0, difficultyLevel: 1, frequency: 3.6};
+var soccerPenaltyControls = {adaptiveDifficulty: true, level: 1, maxHeight: 1.75, wheelchairMode: false, timewarpMode: false, shootDistance: 1, ballSpeed: 0, difficultyLevel: 1, frequency: 3.6, soundtrackVolume: 100.0};
 var soccerPenaltyIsPaused = true;
 
 // open the database
@@ -153,6 +153,14 @@ var appRouter = function (app) {
     eventEmitter.emit('setSoccerPenaltyControls');
     res.end("ok");
   });
+  app.post('/api/soccerPenalty/current/setSoundtrackVolume', function (req, res) {
+    //console.log(req.body.value);
+    soccerPenaltyControls.soundtrackVolume = req.body.value;
+    //console.log(soccerPenaltyControls);
+    eventEmitter.emit('setSoccerPenaltyControls');
+    res.end("ok");
+  });
+
 
 
 
@@ -292,7 +300,7 @@ var appRouter = function (app) {
       console.log('closed');
       eventEmitter.removeListener('sendApplicationQuit', list2 );
       eventEmitter.removeListener('setChartRect', list3 );
-      eventEmitter.removeListener('setSoccerPenaltyControls', updateSoccerPenaltyControls );
+      eventEmitter.removeListener('setSoccerPenaltyControls', updateSoccerPenaltyControlsTimeouted );
       eventEmitter.removeListener('setSoccerPenaltyPlayPause', updateSoccerPlayPause );
     });
     var list2 = function(){
@@ -301,6 +309,12 @@ var appRouter = function (app) {
 
     var list3 = function(){
       ws.send(JSON.stringify({message: "rectangle",data: chartPoint}));
+    }
+
+    var updateFunc;
+    var updateSoccerPenaltyControlsTimeouted = function(){
+      clearTimeout(updateFunc);
+      updateFunc = setTimeout(updateSoccerPenaltyControls, 1000);
     }
     var updateSoccerPenaltyControls = function(){
       ws.send(JSON.stringify({message: "control",data: soccerPenaltyControls}));
@@ -311,7 +325,7 @@ var appRouter = function (app) {
     }
     eventEmitter.on('sendApplicationQuit', list2 );
     eventEmitter.on('setChartRect', list3 );
-    eventEmitter.on('setSoccerPenaltyControls', updateSoccerPenaltyControls );
+    eventEmitter.on('setSoccerPenaltyControls', updateSoccerPenaltyControlsTimeouted );
     eventEmitter.on('setSoccerPenaltyPlayPause', updateSoccerPlayPause );
   });
 
