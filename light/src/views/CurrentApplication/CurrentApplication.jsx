@@ -6,6 +6,7 @@ import Card from "components/Card/Card.jsx";
 import Button from "components/CustomButton/CustomButton.jsx";
 import Checkbox from "components/CustomCheckbox/CustomCheckbox.jsx";
 import Radio from "components/CustomRadio/CustomRadio.jsx";
+import Slider from "components/CustomSlider/CustomSlider.jsx";
 
 import {ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, Label} from "recharts";
 
@@ -21,7 +22,7 @@ var availableGames = ['soccerpenalty', 'SoccerPenalty', 'Bridge', 'Stadium', 'St
 
 class CurrentApplication extends Component{
 //  state = {bubbleChart:{catches: [{x: 0, h: 2, s: 200}, {x: 0.38, h: 1, s: 260}, {x: 2.4792, h: 1.3, s: 400}, {x: 3.56, h: 1.25, s: 280}, {x: 1.34, h: 0.5, s: 500}, {x: 4, h: 1.8, s: 200}], goals: [{x: 3.5, h: 0.6, s: 240}, {x: 1.5, h: 0.9, s: 220}, {x: 0.5, h: 1.4, s: 250}, {x: 2.5, h: 0.5, s: 210}, {x: 2.9, h: 1.6, s: 260}, {x: 1.2, h: 0.4, s: 230}]}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}};
-    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: false, difficulty: 2, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, paused: true};
+    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: false, difficulty: 2, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, paused: true, gameControls: 'hidden'};
 
     handleMouseDown(e){
         chartstatus = 'down';
@@ -191,7 +192,7 @@ class CurrentApplication extends Component{
               .then((response) => {
               })
               .catch(error => console.error('Error:', error));
-            this.setState({startMenu: 'hidden'});
+            this.setState({startMenu: 'hidden', gameControls: 'visible'});
         }
         else{
             console.log('error');
@@ -209,6 +210,8 @@ class CurrentApplication extends Component{
           .then((response) => {
           })
           .catch(error => console.error('Error:', error));
+        this.setState({startMenu: 'visible', gameControls: 'hidden'});
+        
     }
 
     setPaused(){
@@ -413,6 +416,7 @@ class CurrentApplication extends Component{
       <Col md={12}>
       <Card
       title="Game Controls"
+      display={this.state.gameControls}
       ctTableResponsive
       content={
           <form>
@@ -470,16 +474,15 @@ class CurrentApplication extends Component{
                           />
                   </Col>
                   <Col md={5}>
-                      <FormGroup>
-                          <ControlLabel>Maximum height</ControlLabel>
-                          <FormControl
-                              type="range"
-                              min={0.2}
-                              max={2.0}
-                              value={this.state.maxHeight}
-                              onChange={this.changeMaxHeight.bind(this)}
-                          />
-                      </FormGroup>
+                      <Slider
+                          label='Maximum height'
+                          number={5} 
+                          min={0.2}
+                          max={2.0}
+                          step={0.01}
+                          value={this.state.maxHeight}
+                          onChange={this.changeMaxHeight.bind(this)}>
+                      </Slider>
                   </Col>
               </Row>
               <Row>
@@ -491,28 +494,26 @@ class CurrentApplication extends Component{
                               <div>
                                   <Row>
                                       <Col md={6}>
-                                          <FormGroup>
-                                              <ControlLabel>Shoot distance</ControlLabel>
-                                              <FormControl
-                                                  type="range"
-                                                  min={0}
-                                                  max={10}
-                                                  value={this.state.shootDistance}
-                                                  onChange={this.changeShootDistance.bind(this)}
-                                              />
-                                          </FormGroup>
+                                          <Slider
+                                              label='Shoot distance'
+                                              number={6} 
+                                              min={0}
+                                              max={10}
+                                              step={0.1}
+                                              value={this.state.shootDistance}
+                                              onChange={this.changeShootDistance.bind(this)}>
+                                          </Slider>
                                       </Col>
                                       <Col md={6}>
-                                          <FormGroup>
-                                              <ControlLabel>Ball speed</ControlLabel>
-                                              <FormControl
-                                                  type="range"
-                                                  min={1}
-                                                  max={40}
-                                                  value={this.state.ballSpeed}
-                                                  onChange={this.changeBallSpeed.bind(this)}
-                                              />
-                                          </FormGroup>
+                                          <Slider
+                                              label='Ball speed'
+                                              number={7} 
+                                              min={1} 
+                                              max={40}
+                                              step={0.5}
+                                              value={this.state.ballSpeed}
+                                              onChange={this.changeBallSpeed.bind(this)}>
+                                          </Slider>
                                       </Col>
                                   </Row>
                               </div>
