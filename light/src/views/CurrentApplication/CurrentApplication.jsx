@@ -20,9 +20,37 @@ var chartPoint = {x1: 0, y1: 0, x2: 0, y2: 0};
 
 var availableGames = ['soccerpenalty', 'SoccerPenalty', 'Bridge', 'Stadium', 'StadiumPenalty', 'StadiumPenaltyLeap'];
 
+class CustomTooltip extends Component{
+  propTypes: {
+    type: PropTypes.string,
+    payload: PropTypes.array,
+    label: PropTypes.string,
+  }
+
+  getIntroOfPage(payload) {
+      return payload[0].payload.name;
+  }
+
+  render() {
+    const { active } = this.props;
+
+    if (active) {
+      const { payload, label } = this.props;
+      return (
+        <div className="custom-tooltip">
+          <p>{this.getIntroOfPage(payload)}</p>
+        </div>
+      );
+    }
+
+    return null;
+  }
+}
+
+
 class CurrentApplication extends Component{
 //  state = {bubbleChart:{catches: [{x: 0, h: 2, s: 200}, {x: 0.38, h: 1, s: 260}, {x: 2.4792, h: 1.3, s: 400}, {x: 3.56, h: 1.25, s: 280}, {x: 1.34, h: 0.5, s: 500}, {x: 4, h: 1.8, s: 200}], goals: [{x: 3.5, h: 0.6, s: 240}, {x: 1.5, h: 0.9, s: 220}, {x: 0.5, h: 1.4, s: 250}, {x: 2.5, h: 0.5, s: 210}, {x: 2.9, h: 1.6, s: 260}, {x: 1.2, h: 0.4, s: 230}]}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}};
-    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: true, difficulty: 2, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, paused: true, gameControls: 'visible', volume: 100, customMenu: 'hidden', timeWarp: false, wheelchairMode: false, bridgeStats: {playerDamage: 5, dragonDamage: 6, dodges: 4, leftShield: {miss: [{x: 3, y: 1.3, z: 1, value: 3}], hit: [{x: 3.5, y: 1.3, z: 1, value: 2}]}, rightShield: {miss: [{x: 0.5, y: 1.3, z: 1, value: 3}], hit: [{x: 1, y: 1.3, z: 1, value: 1}]}, leftFoot: {miss: [{x: 3, y: 1.5, z: 1, value: 3}], hit: [{x: 3.5, y: 1.5, z: 1, value: 2}]}, rightFoot: {miss: [{x: 0.5, y: 1.5, z: 1, value: 3}], hit: [{x: 1, y: 1.5, z: 1, value: 1}]}}};
+    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: true, difficulty: 2, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, paused: true, gameControls: 'hidden', volume: 100, customMenu: 'hidden', timeWarp: false, wheelchairMode: false, bridgeStats: {playerDamage: [{x: 2, y: 1.25, z: 1, value: 0, name: "Player Damage"}], dragonDamage: [{x: 3.3, y: 1.75, z: 1, value: 0, name: "Dragon Damage"}], dodges: [{x: 3.8, y: 1.75, z: 1, value: 0, name: "Dodges"}], leftShield: {miss: [{x: 0.3, y: 1.2, z: 1, value: 0, name: "Left Shield Reflects"}], hit: [{x: 1.05, y: 1.05, z: 1, value: 0, name: "Left Shield Hits"}]}, rightShield: {miss: [{x: 2.95, y: 1.05, z: 1, value: 0, name: "Right Shield Reflects"}], hit: [{x: 3.7, y: 1.2, z: 1, value: 0, name: "Right Shield Hits"}]}, leftFoot: {miss: [{x: 0.5, y: 0.2, z: 1, value: 0, name: "Left Foot Misses"}], hit: [{x: 1, y: 0.2, z: 1, value: 0, name: "Left Foot Hits"}]}, rightFoot: {miss: [{x: 3, y: 0.2, z: 1, value: 0, name: "Right Foot Misses"}], hit: [{x: 3.5, y: 0.2, z: 1, value: 0, name: "Right Foot Hits"}]}}};
 
     handleMouseDown(e){
         chartstatus = 'down';
@@ -118,13 +146,14 @@ class CurrentApplication extends Component{
 //    console.log(result);
     this.setState({bubbleChart: {catches: result.catches, goals: result.goals}});
   }
-
-    generateTooltip(value){
-        return <div className="custom-tooltip">
-          <p className="desc">Hello</p>
-        </div>;
-    }
-
+  
+  generateTooltip(x, y, z){
+      console.log(x);
+      console.log(y);
+      console.log(z);
+      return "Hello";
+  }
+    
   createDropDown(title, i, data){
         let menulist = [];
         if(data=='patients'){
@@ -350,16 +379,16 @@ class CurrentApplication extends Component{
     changeVolume(e){
          const v = this.state.volume;
          this.setState({ volume: e.target.value});
-//         fetch('/api/soccerPenalty/current/setVolume', {
-//          method: 'POST',
-//          headers: {
-//            'Content-Type': 'application/json',
-//          },
-//          body: JSON.stringify({value: v}),
-//          })
-//          .then((response) => {
-//          })
-//          .catch(error => console.error('Error:', error));
+         fetch('/api/soccerPenalty/current/setVolume', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({value: v}),
+          })
+          .then((response) => {
+          })
+          .catch(error => console.error('Error:', error));
         
     }
 
@@ -505,39 +534,48 @@ class CurrentApplication extends Component{
                           content={
                               <div>
                                   <ResponsiveContainer width="100%" height={500} className="statContainer">
-            <ScatterChart margin={{top: 20, right: 20, bottom: 20, left: 0}}>
-                <XAxis type="number" dataKey={'x'} domain={[0, 4]} hide={true}>
-                </XAxis>
-                <YAxis type="number" domain={[0, 2]} dataKey={'y'} hide={true}>
-                </YAxis>
-                <ZAxis dataKey={'z'} range={[500, 500]} hide={true}/>
-                <Tooltip cursor={false} content={this.generateTooltip}/>
-                <Scatter name='Save' data={this.state.bridgeStats.rightShield.miss} fill='#4cdb2b' opacity= {0.7}>
-                    <LabelList dataKey="value" position="inside" fill ="#fff"/>
-                </Scatter>
-                <Scatter name='Miss' data={this.state.bridgeStats.rightShield.hit} fill='#2b4cdb' opacity= {0.7}>
-                    <LabelList dataKey="value" position="inside" fill ="#fff"/>
-                </Scatter>
-                <Scatter name='Save' data={this.state.bridgeStats.leftShield.miss} fill='#4cdb2b' opacity= {0.7}>
-                    <LabelList dataKey="value" position="inside" fill ="#fff"/>
-                </Scatter>
-                <Scatter name='Miss' data={this.state.bridgeStats.leftShield.hit} fill='#2b4cdb' opacity= {0.7}>
-                    <LabelList dataKey="value" position="inside" fill ="#fff"/>
-                </Scatter>
-                <Scatter name='Save' data={this.state.bridgeStats.rightFoot.miss} fill='#4cdb2b' opacity= {0.7}>
-                    <LabelList dataKey="value" position="inside" fill ="#fff"/>
-                </Scatter>
-                <Scatter name='Miss' data={this.state.bridgeStats.rightFoot.hit} fill='#2b4cdb' opacity= {0.7}>
-                    <LabelList dataKey="value" position="inside" fill ="#fff"/>
-                </Scatter>
-                <Scatter name='Save' data={this.state.bridgeStats.leftFoot.miss} fill='#4cdb2b' opacity= {0.7}>
-                    <LabelList dataKey="value" position="inside" fill ="#fff"/>
-                </Scatter>
-                <Scatter name='Miss' data={this.state.bridgeStats.leftFoot.hit} fill='#2b4cdb' opacity= {0.7}>
-                    <LabelList dataKey="value" position="inside" fill ="#fff"/>
-                </Scatter>
-            </ScatterChart>
-            </ResponsiveContainer>
+                                    <ScatterChart margin={{top: 20, right: 20, bottom: 20, left: 0}}>
+                                        <XAxis type="number" dataKey={'x'} domain={[0, 4]} hide={true}>
+                                        </XAxis>
+                                        <YAxis type="number" domain={[0, 2]} dataKey={'y'} hide={true}>
+                                        </YAxis>
+                                        <ZAxis dataKey={'z'} range={[500, 500]} hide={true}/>
+                                        <Tooltip cursor={false} content={<CustomTooltip/>}/>
+                                        <Scatter data={this.state.bridgeStats.playerDamage} fill='#ff002e' opacity= {0.7}>
+                                            <LabelList dataKey="value" position="inside" fill ="#fff"/>
+                                        </Scatter>
+                                        <Scatter data={this.state.bridgeStats.dodges} fill='#ba2bdb' opacity= {0.7}>
+                                            <LabelList dataKey="value" position="inside" fill ="#fff"/>
+                                        </Scatter>
+                                        <Scatter data={this.state.bridgeStats.dragonDamage} fill='#db622b' opacity= {0.7}>
+                                            <LabelList dataKey="value" position="inside" fill ="#fff"/>
+                                        </Scatter>
+                                        <Scatter data={this.state.bridgeStats.rightShield.miss} fill='#4cdb2b' opacity= {0.7}>
+                                            <LabelList dataKey="value" position="inside" fill ="#fff"/>
+                                        </Scatter>
+                                        <Scatter data={this.state.bridgeStats.rightShield.hit} fill='#2b4cdb' opacity= {0.7}>
+                                            <LabelList dataKey="value" position="inside" fill ="#fff"/>
+                                        </Scatter>
+                                        <Scatter data={this.state.bridgeStats.leftShield.miss} fill='#4cdb2b' opacity= {0.7}>
+                                            <LabelList dataKey="value" position="inside" fill ="#fff"/>
+                                        </Scatter>
+                                        <Scatter data={this.state.bridgeStats.leftShield.hit} fill='#2b4cdb' opacity= {0.7}>
+                                            <LabelList dataKey="value" position="inside" fill ="#fff"/>
+                                        </Scatter>
+                                        <Scatter data={this.state.bridgeStats.rightFoot.miss} fill='#4cdb2b' opacity= {0.7}>
+                                            <LabelList dataKey="value" position="inside" fill ="#fff"/>
+                                        </Scatter>
+                                        <Scatter data={this.state.bridgeStats.rightFoot.hit} fill='#2b4cdb' opacity= {0.7}>
+                                            <LabelList dataKey="value" position="inside" fill ="#fff"/>
+                                        </Scatter>
+                                        <Scatter data={this.state.bridgeStats.leftFoot.miss} fill='#4cdb2b' opacity= {0.7}>
+                                            <LabelList dataKey="value" position="inside" fill ="#fff"/>
+                                        </Scatter>
+                                        <Scatter data={this.state.bridgeStats.leftFoot.hit} fill='#2b4cdb' opacity= {0.7}>
+                                            <LabelList dataKey="value" position="inside" fill ="#fff"/>
+                                        </Scatter>
+                                    </ScatterChart>
+                                  </ResponsiveContainer>
                               </div>
                           }
                         />                      
@@ -596,7 +634,7 @@ class CurrentApplication extends Component{
                                   <Row>
                                       <Col md={12}>
                                           <FormGroup value={this.state.level}>
-                                              <Radio name="radioGroup" value={0} label="Easy (Level 1)" number={0} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty}>
+                                              <Radio name="radioGroup" value={0} label="Easy (Level 2)" number={0} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty}>
                                               </Radio>
                                               <Radio name="radioGroup" value={1} label="Medium (Level 5)" number={1} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty}>
                                               </Radio>

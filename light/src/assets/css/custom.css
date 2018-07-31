@@ -75,3 +75,14 @@
 .slider-label{
     margin-bottom: 5px;
 }
+
+.custom-tooltip{
+    background-color: #fff;
+    padding-left: 5px;
+    padding-right: 5px;
+    border-radius: 2px;
+}
+
+.custom-tooltip p{
+    font-size: 12px !important;
+}
