@@ -144,14 +144,18 @@ class CurrentApplication extends Component{
   handleData(data) {
     let result = JSON.parse(data);
 //    console.log(result);
-    this.setState({bubbleChart: {catches: result.catches, goals: result.goals}});
-  }
-  
-  generateTooltip(x, y, z){
-      console.log(x);
-      console.log(y);
-      console.log(z);
-      return "Hello";
+      if(result.GameId=="soccerPenalty"){
+          if(result.message=="updateScore"){
+              this.setState({bubbleChart: {catches: result.data.catches, goals: result.data.goals}});
+          }
+          else if(result.message=="updateLevel"){
+              this.setState({level: result.level, difficulty: result.difficulty});
+          }
+          else if(result.message=="updatePlayPause"){
+              this.setState({paused: result.isPaused});
+              console.log("paused", result.isPaused);
+          }
+      }    
   }
     
   createDropDown(title, i, data){
