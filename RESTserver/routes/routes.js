@@ -153,7 +153,7 @@ var appRouter = function (app) {
     eventEmitter.emit('setSoccerPenaltyControls');
     res.end("ok");
   });
-  app.post('/api/soccerPenalty/current/setSoundtrackVolume', function (req, res) {
+  app.post('/api/soccerPenalty/current/setVolume', function (req, res) {
     //console.log(req.body.value);
     soccerPenaltyControls.soundtrackVolume = req.body.value;
     //console.log(soccerPenaltyControls);
@@ -242,6 +242,8 @@ var appRouter = function (app) {
     ws.on('close', function() {
       console.log('closed');
       eventEmitter.removeListener('updateScore', list1 );
+      eventEmitter.removeListener('soccerUpdatePlayPause', list2 );
+      eventEmitter.removeListener('soccerUpdateLevel', list3 );
     });
     ws.on('message', function(msg) {
       console.log(msg);
@@ -261,12 +263,25 @@ var appRouter = function (app) {
           for(i in row){
             goals.push({x: row[i].XValue, h: row[i].YValue, s: row[i].Speed});
           }
-          var toSend = {"catches":catches, "goals":goals};
+          var data = {"catches":catches, "goals":goals};
+          var toSend = {"GameId": "soccerPenalty", "message":"updateScore", "data": data};
           ws.send(JSON.stringify(toSend));
         });
       });
     }
+
+    var list2 = function(){
+      var toSend = {"GameId": "soccerPenalty", "message":"updatePlayPause", "data": true};
+      ws.send(JSON.stringify(toSend));
+    }
+    var list3 = function(){
+      var toSend = {"GameId": "soccerPenalty", "message":"updateLevel", "level": soccerPenaltyControls.level, "difficulty": soccerPenaltyControls.difficultyLevel };
+      ws.send(JSON.stringify(toSend));
+    }
+
     eventEmitter.on('updateScore', list1 );
+    eventEmitter.on('soccerUpdatePlayPause', list2 );
+    eventEmitter.on('soccerUpdateLevel', list3 );
 
   });
 
@@ -294,6 +309,7 @@ var appRouter = function (app) {
           soccerPenaltyControls.difficultyLevel = 2; //hard
         }
         console.log("difficulty: " + soccerPenaltyControls.difficultyLevel);
+        eventEmitter.emit('soccerUpdateLevel');
       }
     });
     ws.on('close', function() {
@@ -328,6 +344,8 @@ var appRouter = function (app) {
     eventEmitter.on('setSoccerPenaltyControls', updateSoccerPenaltyControlsTimeouted );
     eventEmitter.on('setSoccerPenaltyPlayPause', updateSoccerPlayPause );
   });
+
+
 
 
 
