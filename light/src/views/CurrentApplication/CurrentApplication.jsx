@@ -159,17 +159,17 @@ class CurrentApplication extends Component{
       else if(result.GameId=="bridge"){
           if(result.message=="updatePlayerStatistics"){
               const bridgeStats = this.state.bridgeStats;
-              bridgeStats.playerDamage[0].value = result.playerDamage;
-              bridgeStats.dragonDamage[0].value = result.dragonDamage;
-              bridgeStats.dodges[0].value = result.dodges;
-              bridgeStats.leftShield.miss[0].value = result.leftShieldReflects;
-              bridgeStats.leftShield.hit[0].value = result.leftShieldHits;
-              bridgeStats.rightShield.miss[0].value = result.rightShieldReflects;
-              bridgeStats.rightShield.hit[0].value = result.rightShieldHits;
-              bridgeStats.leftFoot.hit[0].value = result.leftFootHits;
-              bridgeStats.leftFoot.miss[0].value = result.leftFootMisses;
-              bridgeStats.rightFoot.hit[0].value = result.rightFootHits;
-              bridgeStats.rightFoot.miss[0].value = result.rightFootMisses;
+              bridgeStats.playerDamage[0].value = result.data.playerDamage;
+              bridgeStats.dragonDamage[0].value = result.data.dragonDamage;
+              bridgeStats.dodges[0].value = result.data.dodges;
+              bridgeStats.leftShield.miss[0].value = result.data.leftShieldReflects;
+              bridgeStats.leftShield.hit[0].value = result.data.leftShieldHits;
+              bridgeStats.rightShield.miss[0].value = result.data.rightShieldReflects;
+              bridgeStats.rightShield.hit[0].value = result.data.rightShieldHits;
+              bridgeStats.leftFoot.hit[0].value = result.data.leftFootHits;
+              bridgeStats.leftFoot.miss[0].value = result.data.leftFootMisses;
+              bridgeStats.rightFoot.hit[0].value = result.data.rightFootHits;
+              bridgeStats.rightFoot.miss[0].value = result.data.rightFootMisses;
               console.log(bridgeStats);
               this.setState({bridgeStats: bridgeStats});
           }
