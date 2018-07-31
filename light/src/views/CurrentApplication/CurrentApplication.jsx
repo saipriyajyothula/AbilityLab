@@ -50,7 +50,7 @@ class CustomTooltip extends Component{
 
 class CurrentApplication extends Component{
 //  state = {bubbleChart:{catches: [{x: 0, h: 2, s: 200}, {x: 0.38, h: 1, s: 260}, {x: 2.4792, h: 1.3, s: 400}, {x: 3.56, h: 1.25, s: 280}, {x: 1.34, h: 0.5, s: 500}, {x: 4, h: 1.8, s: 200}], goals: [{x: 3.5, h: 0.6, s: 240}, {x: 1.5, h: 0.9, s: 220}, {x: 0.5, h: 1.4, s: 250}, {x: 2.5, h: 0.5, s: 210}, {x: 2.9, h: 1.6, s: 260}, {x: 1.2, h: 0.4, s: 230}]}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}};
-    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: true, difficulty: 2, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, paused: true, gameControls: 'hidden', volume: 100, customMenu: 'hidden', timeWarp: false, wheelchairMode: false, bridgeStats: {playerDamage: [{x: 2, y: 1.25, z: 1, value: 0, name: "Player Damage"}], dragonDamage: [{x: 3.3, y: 1.75, z: 1, value: 0, name: "Dragon Damage"}], dodges: [{x: 3.8, y: 1.75, z: 1, value: 0, name: "Dodges"}], leftShield: {miss: [{x: 0.3, y: 1.2, z: 1, value: 0, name: "Left Shield Reflects"}], hit: [{x: 1.05, y: 1.05, z: 1, value: 0, name: "Left Shield Hits"}]}, rightShield: {miss: [{x: 2.95, y: 1.05, z: 1, value: 0, name: "Right Shield Reflects"}], hit: [{x: 3.7, y: 1.2, z: 1, value: 0, name: "Right Shield Hits"}]}, leftFoot: {miss: [{x: 0.5, y: 0.2, z: 1, value: 0, name: "Left Foot Misses"}], hit: [{x: 1, y: 0.2, z: 1, value: 0, name: "Left Foot Hits"}]}, rightFoot: {miss: [{x: 3, y: 0.2, z: 1, value: 0, name: "Right Foot Misses"}], hit: [{x: 3.5, y: 0.2, z: 1, value: 0, name: "Right Foot Hits"}]}}};
+    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: true, difficulty: 2, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, soccerPaused: true, gameControls: 'hidden', volume: 100, customMenu: 'hidden', timeWarp: false, wheelchairMode: false, bridgeStats: {playerDamage: [{x: 2, y: 1.25, z: 1, value: 0, name: "Player Damage"}], dragonDamage: [{x: 3.3, y: 1.75, z: 1, value: 0, name: "Dragon Damage"}], dodges: [{x: 3.8, y: 1.75, z: 1, value: 0, name: "Dodges"}], leftShield: {miss: [{x: 0.3, y: 1.2, z: 1, value: 0, name: "Left Shield Reflects"}], hit: [{x: 1.05, y: 1.05, z: 1, value: 0, name: "Left Shield Hits"}]}, rightShield: {miss: [{x: 2.95, y: 1.05, z: 1, value: 0, name: "Right Shield Reflects"}], hit: [{x: 3.7, y: 1.2, z: 1, value: 0, name: "Right Shield Hits"}]}, leftFoot: {miss: [{x: 1, y: 0.2, z: 1, value: 0, name: "Left Foot Misses"}], hit: [{x: 0.5, y: 0.2, z: 1, value: 0, name: "Left Foot Hits"}]}, rightFoot: {miss: [{x: 3.5, y: 0.2, z: 1, value: 0, name: "Right Foot Misses"}], hit: [{x: 3, y: 0.2, z: 1, value: 0, name: "Right Foot Hits"}]}}};
 
     handleMouseDown(e){
         chartstatus = 'down';
@@ -152,8 +152,8 @@ class CurrentApplication extends Component{
               this.setState({level: result.level, difficulty: result.difficulty});
           }
           else if(result.message=="updatePlayPause"){
-              this.setState({paused: result.isPaused});
-              console.log("paused", result.isPaused);
+              this.setState({soccerPaused: result.isPaused});
+              console.log("soccerPaused", result.isPaused);
           }
       }    
   }
@@ -254,8 +254,8 @@ class CurrentApplication extends Component{
     }
 
     setPaused(){
-        const paused = this.state.paused;
-        this.setState({paused: !paused});
+        const paused = this.state.soccerPaused;
+        this.setState({soccerPaused: !paused});
         fetch('/api/soccerPenalty/current/setPaused', {
           method: 'POST',
           headers: {
@@ -566,16 +566,16 @@ class CurrentApplication extends Component{
                                         <Scatter data={this.state.bridgeStats.leftShield.hit} fill='#2b4cdb' opacity= {0.7}>
                                             <LabelList dataKey="value" position="inside" fill ="#fff"/>
                                         </Scatter>
-                                        <Scatter data={this.state.bridgeStats.rightFoot.miss} fill='#4cdb2b' opacity= {0.7}>
+                                        <Scatter data={this.state.bridgeStats.rightFoot.hit} fill='#4cdb2b' opacity= {0.7}>
                                             <LabelList dataKey="value" position="inside" fill ="#fff"/>
                                         </Scatter>
-                                        <Scatter data={this.state.bridgeStats.rightFoot.hit} fill='#2b4cdb' opacity= {0.7}>
+                                        <Scatter data={this.state.bridgeStats.rightFoot.miss} fill='#ff002e' opacity= {0.7}>
                                             <LabelList dataKey="value" position="inside" fill ="#fff"/>
                                         </Scatter>
-                                        <Scatter data={this.state.bridgeStats.leftFoot.miss} fill='#4cdb2b' opacity= {0.7}>
+                                        <Scatter data={this.state.bridgeStats.leftFoot.hit} fill='#4cdb2b' opacity= {0.7}>
                                             <LabelList dataKey="value" position="inside" fill ="#fff"/>
                                         </Scatter>
-                                        <Scatter data={this.state.bridgeStats.leftFoot.hit} fill='#2b4cdb' opacity= {0.7}>
+                                        <Scatter data={this.state.bridgeStats.leftFoot.miss} fill='#ff002e' opacity= {0.7}>
                                             <LabelList dataKey="value" position="inside" fill ="#fff"/>
                                         </Scatter>
                                     </ScatterChart>
@@ -762,7 +762,7 @@ class CurrentApplication extends Component{
                                   </Row>
                                   <Row>
                                       <Col md={12}>
-                                          <FormGroup value={this.state.level}>
+                                          <FormGroup value={this.state.difficulty}>
                                               <Radio name="radioGroup" value={0} label="Easy (Level 1)" number={0} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty}>
                                               </Radio>
                                               <Radio name="radioGroup" value={1} label="Medium (Level 5)" number={1} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty}>
