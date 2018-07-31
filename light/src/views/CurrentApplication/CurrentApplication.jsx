@@ -170,6 +170,7 @@ class CurrentApplication extends Component{
               bridgeStats.leftFoot.miss[0].value = result.leftFootMisses;
               bridgeStats.rightFoot.hit[0].value = result.rightFootHits;
               bridgeStats.rightFoot.miss[0].value = result.rightFootMisses;
+              console.log(bridgeStats);
               this.setState({bridgeStats: bridgeStats});
           }
       }
