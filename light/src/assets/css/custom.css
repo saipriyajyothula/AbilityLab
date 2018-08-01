@@ -86,3 +86,37 @@
 .custom-tooltip p{
     font-size: 12px !important;
 }
+
+.green-side{
+    height: 100px;
+    border: 1px solid #ddd;
+    background-color: #cef0cd;
+}
+
+.gray-side{
+    height: 100px;
+    border: 1px solid #ddd;
+    background-color: #eee;
+}
+
+.bridge{
+    height: 300px;
+    border: 1px solid #ddd;
+    background-image: url(../img/wood-bridge.png);
+    background-repeat: repeat-y;
+    background-size: contain;
+}
+
+.right-steps{
+    height: 75px;
+    border: 1px solid #ddd;
+    background-color: #eee;
+    margin-left: 25px;
+}
+
+.left-steps{
+    height: 75px;
+    border: 1px solid #ddd;
+    background-color: #eee;
+    margin-right: 25px;
+}

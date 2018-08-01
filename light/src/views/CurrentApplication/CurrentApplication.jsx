@@ -50,7 +50,7 @@ class CustomTooltip extends Component{
 
 class CurrentApplication extends Component{
 //  state = {bubbleChart:{catches: [{x: 0, h: 2, s: 200}, {x: 0.38, h: 1, s: 260}, {x: 2.4792, h: 1.3, s: 400}, {x: 3.56, h: 1.25, s: 280}, {x: 1.34, h: 0.5, s: 500}, {x: 4, h: 1.8, s: 200}], goals: [{x: 3.5, h: 0.6, s: 240}, {x: 1.5, h: 0.9, s: 220}, {x: 0.5, h: 1.4, s: 250}, {x: 2.5, h: 0.5, s: 210}, {x: 2.9, h: 1.6, s: 260}, {x: 1.2, h: 0.4, s: 230}]}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}};
-    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: true, difficulty: 3, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, soccerPaused: true, gameControls: 'visible', volume: 100, customMenu: 'hidden', timeWarp: false, wheelchairMode: false, bridgeStats: {playerDamage: [{x: 2, y: 1.25, z: 1, value: 0, name: "Player Damage"}], dragonDamage: [{x: 3.3, y: 1.75, z: 1, value: 0, name: "Dragon Damage"}], dodges: [{x: 3.8, y: 1.75, z: 1, value: 0, name: "Dodges"}], leftShield: {miss: [{x: 0.3, y: 1.2, z: 1, value: 0, name: "Left Shield Reflects"}], hit: [{x: 1.05, y: 1.05, z: 1, value: 0, name: "Left Shield Hits"}]}, rightShield: {miss: [{x: 2.95, y: 1.05, z: 1, value: 0, name: "Right Shield Reflects"}], hit: [{x: 3.7, y: 1.2, z: 1, value: 0, name: "Right Shield Hits"}]}, leftFoot: {miss: [{x: 1, y: 0.2, z: 1, value: 0, name: "Left Foot Misses"}], hit: [{x: 0.5, y: 0.2, z: 1, value: 0, name: "Left Foot Hits"}]}, rightFoot: {miss: [{x: 3.5, y: 0.2, z: 1, value: 0, name: "Right Foot Misses"}], hit: [{x: 3, y: 0.2, z: 1, value: 0, name: "Right Foot Hits"}]}}};
+    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: true, difficulty: 1, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, soccerPaused: true, gameControls: 'hidden', volume: 100, customMenu: 'hidden', timeWarp: false, wheelchairMode: false, bridgeStats: {playerDamage: [{x: 2, y: 1.25, z: 1, value: 0, name: "Player Damage"}], dragonDamage: [{x: 3.3, y: 1.75, z: 1, value: 0, name: "Dragon Damage"}], dodges: [{x: 3.8, y: 1.75, z: 1, value: 0, name: "Dodges"}], leftShield: {miss: [{x: 0.3, y: 1.2, z: 1, value: 0, name: "Left Shield Dragon Hits"}], hit: [{x: 1.05, y: 1.05, z: 1, value: 0, name: "Left Shield Blocks"}]}, rightShield: {miss: [{x: 2.95, y: 1.05, z: 1, value: 0, name: "Right Shield Dragon Hits"}], hit: [{x: 3.7, y: 1.2, z: 1, value: 0, name: "Right Shield Blocks"}]}, leftFoot: {miss: [{x: 1, y: 0.2, z: 1, value: 0, name: "Left Foot Misses"}], hit: [{x: 0.5, y: 0.2, z: 1, value: 0, name: "Left Foot Hits"}]}, rightFoot: {miss: [{x: 3.5, y: 0.2, z: 1, value: 0, name: "Right Foot Misses"}], hit: [{x: 3, y: 0.2, z: 1, value: 0, name: "Right Foot Hits"}]}}};
 
     handleMouseDown(e){
         chartstatus = 'down';
@@ -170,7 +170,6 @@ class CurrentApplication extends Component{
               bridgeStats.leftFoot.miss[0].value = result.data.leftFootMisses;
               bridgeStats.rightFoot.hit[0].value = result.data.rightFootHits;
               bridgeStats.rightFoot.miss[0].value = result.data.rightFootMisses;
-              console.log(bridgeStats);
               this.setState({bridgeStats: bridgeStats});
           }
       }
@@ -502,7 +501,7 @@ class CurrentApplication extends Component{
       <Card
       title="Application In Use"
       category="Soccer Penalty"
-      display={'visible'}
+      display={'hidden'}
       ctTableFullWidth
       ctTableResponsive
       content={
@@ -540,11 +539,44 @@ class CurrentApplication extends Component{
                   <Row>
                   <Col md={8}>
                       <Card
-                          title="Level"
+                          title="Top View"
                           ctTableResponsive
                           content={
                               <div>
-                                  
+                                  <Row>
+                                      <Col md={12}>
+                                          <div className="green-side">
+                                          </div>
+                                      </Col>
+                                  </Row>
+                                  <Row>
+                                      <Col md={3}>
+                                          <div className="bridge">
+                                          </div>
+                                      </Col>
+                                      <Col md={3}>
+                                      </Col>
+                                      <Col md={3}>
+                                      </Col>
+                                      <Col md={3}>
+                                          <div className="steps">
+                                              <div className="right-steps">
+                                              </div>
+                                              <div className="left-steps">
+                                              </div>
+                                              <div className="right-steps">
+                                              </div>
+                                              <div className="left-steps">
+                                              </div>
+                                          </div>
+                                      </Col>
+                                  </Row>
+                                  <Row>
+                                      <Col md={12}>
+                                          <div className="gray-side">
+                                          </div>
+                                      </Col>
+                                  </Row>
                               </div>
                           }
                         />
@@ -655,14 +687,14 @@ class CurrentApplication extends Component{
                                   </Row>
                                   <Row>
                                       <Col md={12}>
-                                          <FormGroup value={this.state.difficulty}>
-                                              <Radio name="radioGroup" value={0} label="Easy (Level 2)" number={0} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty}>
+                                          <FormGroup>
+                                              <Radio name="radioGroup" value={0} label="Easy (Level 2)" number={0} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty} checked={this.state.difficulty==0}>
                                               </Radio>
-                                              <Radio name="radioGroup" value={1} label="Medium (Level 5)" number={1} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty}>
+                                              <Radio name="radioGroup" value={1} label="Medium (Level 5)" number={1} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty} checked={this.state.difficulty==1}>
                                               </Radio>
-                                              <Radio name="radioGroup" value={2} label="Hard (Level 9)" number={2} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty} defaultChecked>
+                                              <Radio name="radioGroup" value={2} label="Hard (Level 9)" number={2} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty} checked={this.state.difficulty==2}>
                                               </Radio>
-                                              <Radio name="radioGroup" value={3} label="Custom" number={3} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty}>
+                                              <Radio name="radioGroup" value={3} label="Custom" number={3} onClick={this.handleDifficultyChange.bind(this)} disabled={this.state.adaptiveDifficulty} checked={this.state.difficulty==3}>
                                               </Radio>
                                           </FormGroup>
                                       </Col>
