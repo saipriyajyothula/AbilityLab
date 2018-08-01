@@ -11,6 +11,10 @@ var chartPoint = {x1: 0, y1: 0, x2: 0, y2: 0};
 var soccerPenaltyControls = {adaptiveDifficulty: true, level: 1, maxHeight: 1.75, wheelchairMode: false, timewarpMode: false, shootDistance: 1, ballSpeed: 0, difficultyLevel: 1, frequency: 3.6, soundtrackVolume: 100.0};
 var soccerPenaltyIsPaused = true;
 
+var bridgePlayerData = {playerDamage: 0, dragonDamage: 0, dodges: 0, leftShieldReflects: 0, leftShieldHits: 0, rightShieldReflects:0, rightShieldHits: 0, leftFootMisses:0 ,leftFootHits: 0, rightFootMisses:0 ,rightFootHits: 0}
+
+var appRunning = null;
+
 // open the database
 let db = new sqlite3.Database(path.join(__dirname, '../db/database.db'), sqlite3.OPEN_READWRITE, (err) => {
   if (err) {
@@ -234,6 +238,39 @@ var appRouter = function (app) {
     res.end("ok");
   });
 
+  app.post('/api/bridge/current/PlayerStats', function (req, res) {
+
+    console.log(req.body);
+    bridgePlayerData = req.body;
+    eventEmitter.emit('bridgeUpdatePlayerStats');
+    res.end("ok");
+  });
+
+
+  app.post('/api/bridge/current/newSession', function(req, res){
+    var newSessionId = 0;
+    db.serialize(function(){
+      db.get("SELECT MAX(`SessionId`) AS  'OldSessionId' FROM `GameData`", function(err, row) {
+        newSessionId = row.OldSessionId +1;
+        db.run("INSERT INTO `GameData`(`GameId`,`PatientId`,`SessionId`,`Timestamp` ) VALUES (?,?,?, datetime('now', 'localtime'));", 2, req.body.PatientId, newSessionId);
+        res.status(200).send(JSON.stringify(newSessionId));
+      });
+
+    });
+  });
+
+  app.get('/api/currentApplication', function (req, res) {
+    if(appRunning != null){
+      isRunning = true;
+    }else{
+      isRunning = false;
+    }
+    var applicationStatus = {isAppRunning: isRunning, GameId: appRunning};
+    res.status(200).send(applicationStatus);
+  });
+
+
+
 
   app.ws('/socket/websocket', function(ws, req) {
     ws.on('open', function(msg) {
@@ -241,15 +278,16 @@ var appRouter = function (app) {
     });
     ws.on('close', function() {
       console.log('closed');
-      eventEmitter.removeListener('updateScore', list1 );
-      eventEmitter.removeListener('soccerUpdatePlayPause', list2 );
-      eventEmitter.removeListener('soccerUpdateLevel', list3 );
+      eventEmitter.removeListener('updateScore', soccerPenaltyFunc1);
+      eventEmitter.removeListener('soccerUpdatePlayPause', soccerPenaltyFunc2 );
+      eventEmitter.removeListener('soccerUpdateLevel', soccerPenaltyFunc3 );
+      eventEmitter.removeListener('bridgeUpdatePlayerStats', bridgeFunc1 );
     });
     ws.on('message', function(msg) {
       console.log(msg);
     });
 
-    var list1 = function() {
+    var soccerPenaltyFunc1 = function() {
       console.log('updatescore');
       var catches = [];
       var goals = [];
@@ -270,22 +308,33 @@ var appRouter = function (app) {
       });
     }
 
-    var list2 = function(){
-      var toSend = {"GameId": "soccerPenalty", "message":"updatePlayPause", "data": true};
+    var soccerPenaltyFunc2 = function(){
+      var toSend = {"GameId": "soccerPenalty", "message":"updatePlayPause", "isPaused": soccerPenaltyIsPaused};
       ws.send(JSON.stringify(toSend));
     }
-    var list3 = function(){
+    var soccerPenaltyFunc3 = function(){
       var toSend = {"GameId": "soccerPenalty", "message":"updateLevel", "level": soccerPenaltyControls.level, "difficulty": soccerPenaltyControls.difficultyLevel };
       ws.send(JSON.stringify(toSend));
     }
 
-    eventEmitter.on('updateScore', list1 );
-    eventEmitter.on('soccerUpdatePlayPause', list2 );
-    eventEmitter.on('soccerUpdateLevel', list3 );
+    var bridgeFunc1 = function(){
+      var toSend = {"GameId": "bridge", "message":"updatePlayerStatistics", "data": bridgePlayerData};
+      console.log(bridgePlayerData);
+      ws.send(JSON.stringify(toSend));
+    }
+
+
+
+    eventEmitter.on('updateScore', soccerPenaltyFunc1 );
+    eventEmitter.on('soccerUpdatePlayPause', soccerPenaltyFunc2 );
+    eventEmitter.on('soccerUpdateLevel', soccerPenaltyFunc3 );
+    eventEmitter.on('bridgeUpdatePlayerStats', bridgeFunc1 );
 
   });
 
   app.ws('/socket/penaltyControl', function(ws, req) {
+
+    appRunning = "soccerPenalty";
 
     ws.on('message', function(msg) {
       console.log(msg);
@@ -313,6 +362,7 @@ var appRouter = function (app) {
       }
     });
     ws.on('close', function() {
+      appRunning = null;
       console.log('closed');
       eventEmitter.removeListener('sendApplicationQuit', list2 );
       eventEmitter.removeListener('setChartRect', list3 );
@@ -345,6 +395,15 @@ var appRouter = function (app) {
     eventEmitter.on('setSoccerPenaltyPlayPause', updateSoccerPlayPause );
   });
 
+  app.ws('/socket/bridgeControl', function(ws, req) {
+
+    ws.on('message', function(msg) {
+      console.log(msg);
+      var message = JSON.parse(msg);
+
+      ws.send("received");
+    });
+  });
 
 
 
