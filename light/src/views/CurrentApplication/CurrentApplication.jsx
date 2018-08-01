@@ -447,6 +447,23 @@ class CurrentApplication extends Component{
 
 
   componentDidMount(){
+    
+    fetch('/api/currentApplication', {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      if(data.isAppRunning){
+          if(GameId=="soccerPenalty"){
+            this.setState({soccerGameControls: 'visible', startMenu: 'hidden'});
+          }
+      }
+    });  
+      
     fetch('/patients', {
       method: 'GET',
       headers: {
