@@ -458,7 +458,7 @@ class CurrentApplication extends Component{
     .then((response) => response.json())
     .then((data) => {
       if(data.isAppRunning){
-          if(GameId=="soccerPenalty"){
+          if(data.GameId=="soccerPenalty"){
             this.setState({soccerGameControls: 'visible', startMenu: 'hidden'});
           }
       }
