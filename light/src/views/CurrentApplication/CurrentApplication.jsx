@@ -18,7 +18,7 @@ var chartFlag = false;
 
 var chartPoint = {x1: 0, y1: 0, x2: 0, y2: 0};
 
-var availableGames = ['soccerpenalty', 'SoccerPenalty', 'Bridge', 'Stadium', 'StadiumPenalty', 'StadiumPenaltyLeap'];
+var availableGames = ['SoccerPenalty', 'Bridge'];
 
 class CustomTooltip extends Component{
   propTypes: {
@@ -50,7 +50,7 @@ class CustomTooltip extends Component{
 
 class CurrentApplication extends Component{
 //  state = {bubbleChart:{catches: [{x: 0, h: 2, s: 200}, {x: 0.38, h: 1, s: 260}, {x: 2.4792, h: 1.3, s: 400}, {x: 3.56, h: 1.25, s: 280}, {x: 1.34, h: 0.5, s: 500}, {x: 4, h: 1.8, s: 200}], goals: [{x: 3.5, h: 0.6, s: 240}, {x: 1.5, h: 0.9, s: 220}, {x: 0.5, h: 1.4, s: 250}, {x: 2.5, h: 0.5, s: 210}, {x: 2.9, h: 1.6, s: 260}, {x: 1.2, h: 0.4, s: 230}]}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}};
-    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: true, difficulty: 1, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, soccerPaused: true, soccerGameControls: 'hidden', volume: 100, customMenu: 'hidden', timeWarp: false, wheelchairMode: false, bridgeStats: {playerDamage: [{x: 2, y: 1.25, z: 1, value: 0, name: "Player Damage"}], dragonDamage: [{x: 3.3, y: 1.75, z: 1, value: 0, name: "Dragon Damage"}], dodges: [{x: 3.8, y: 1.75, z: 1, value: 0, name: "Dodges"}], leftShield: {miss: [{x: 0.3, y: 1.2, z: 1, value: 0, name: "Left Shield Dragon Hits"}], hit: [{x: 1.05, y: 1.05, z: 1, value: 0, name: "Left Shield Blocks"}]}, rightShield: {miss: [{x: 2.95, y: 1.05, z: 1, value: 0, name: "Right Shield Dragon Hits"}], hit: [{x: 3.7, y: 1.2, z: 1, value: 0, name: "Right Shield Blocks"}]}, leftFoot: {miss: [{x: 1, y: 0.2, z: 1, value: 0, name: "Left Foot Misses"}], hit: [{x: 0.5, y: 0.2, z: 1, value: 0, name: "Left Foot Hits"}]}, rightFoot: {miss: [{x: 3.5, y: 0.2, z: 1, value: 0, name: "Right Foot Misses"}], hit: [{x: 3, y: 0.2, z: 1, value: 0, name: "Right Foot Hits"}]}}};
+    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: true, difficulty: 1, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, soccerPaused: true, soccerGameControls: 'hidden', bridgeGameControls: 'hidden', volume: 100, customMenu: 'hidden', timeWarp: false, wheelchairMode: false, bridgeStats: {playerDamage: [{x: 2, y: 1.25, z: 1, value: 0, name: "Player Damage"}], dragonDamage: [{x: 3.3, y: 1.75, z: 1, value: 0, name: "Dragon Damage"}], dodges: [{x: 3.8, y: 1.75, z: 1, value: 0, name: "Dodges"}], leftShield: {miss: [{x: 0.3, y: 1.2, z: 1, value: 0, name: "Left Shield Dragon Hits"}], hit: [{x: 1.05, y: 1.05, z: 1, value: 0, name: "Left Shield Blocks"}]}, rightShield: {miss: [{x: 2.95, y: 1.05, z: 1, value: 0, name: "Right Shield Dragon Hits"}], hit: [{x: 3.7, y: 1.2, z: 1, value: 0, name: "Right Shield Blocks"}]}, leftFoot: {miss: [{x: 1, y: 0.2, z: 1, value: 0, name: "Left Foot Misses"}], hit: [{x: 0.5, y: 0.2, z: 1, value: 0, name: "Left Foot Hits"}]}, rightFoot: {miss: [{x: 3.5, y: 0.2, z: 1, value: 0, name: "Right Foot Misses"}], hit: [{x: 3, y: 0.2, z: 1, value: 0, name: "Right Foot Hits"}]}}};
 
     handleMouseDown(e){
         chartstatus = 'down';
@@ -155,6 +155,9 @@ class CurrentApplication extends Component{
               this.setState({soccerPaused: result.isPaused});
               console.log("soccerPaused", result.isPaused);
           }
+          else if(result.message=="killed"){
+              this.setState({startMenu: "visible", soccerGameControls: "hidden"});
+          }
       }
       else if(result.GameId=="bridge"){
           if(result.message=="updatePlayerStatistics"){
@@ -171,6 +174,9 @@ class CurrentApplication extends Component{
               bridgeStats.rightFoot.hit[0].value = result.data.rightFootHits;
               bridgeStats.rightFoot.miss[0].value = result.data.rightFootMisses;
               this.setState({bridgeStats: bridgeStats});
+          }
+          else if(result.message=="killed"){
+              this.setState({startMenu: "visible", bridgeGameControls: "hidden"});
           }
       }
   }
@@ -248,7 +254,12 @@ class CurrentApplication extends Component{
               .then((response) => {
               })
               .catch(error => console.error('Error:', error));
-            this.setState({startMenu: 'hidden', soccerGameControls: 'visible'});
+            if(this.state.currentGame.toLowerCase()=="soccerpenalty"){
+                this.setState({startMenu: 'hidden', soccerGameControls: 'visible'});
+            }
+            else if(this.state.currentGame.toLowerCase()=="bridge"){
+                this.setState({startMenu: 'hidden', bridgeGameControls: 'visible'});
+            }
         }
         else{
             console.log('error');
@@ -266,7 +277,12 @@ class CurrentApplication extends Component{
           .then((response) => {
           })
           .catch(error => console.error('Error:', error));
-        this.setState({startMenu: 'visible', soccerGameControls: 'hidden'});
+        if(this.state.currentGame.toLowerCase()=="soccerpenalty"){
+            this.setState({startMenu: 'visible', soccerGameControls: 'hidden'});
+        }
+        else if(this.state.currentGame.toLowerCase()=="bridge"){
+            this.setState({startMenu: 'visible', bridgeGameControls: 'hidden'});
+        }
         
     }
 
@@ -459,7 +475,10 @@ class CurrentApplication extends Component{
     .then((data) => {
       if(data.isAppRunning){
           if(data.GameId=="soccerPenalty"){
-            this.setState({soccerGameControls: 'visible', startMenu: 'hidden'});
+            this.setState({soccerGameControls: 'visible', startMenu: 'hidden', currentGame: "SoccerPenalty"});
+          }
+          else if(data.GameId=="bridge"){
+            this.setState({bridgeGameControls: 'visible', startMenu: 'hidden', currentGame: "Bridge"});
           }
       }
     });  
@@ -550,7 +569,7 @@ class CurrentApplication extends Component{
       <Card
       title="Application In Use"
       category="Bridge"
-      display='hidden'
+      display={this.state.bridgeGameControls}
       ctTableResponsive
       content={
                   <Row>
@@ -793,7 +812,30 @@ class CurrentApplication extends Component{
       />
       </Col>
 
-      </Row>         
+      </Row>
+
+      <Row>
+      <Col md={12}>
+      <Card
+      title="Game Controls"
+      display={this.state.bridgeGameControls}
+      ctTableResponsive
+      content={
+          <form>
+              <Row>
+                  <Col md={6}>
+                      <Button bsStyle="info" pullRight fill onClick={this.quitGame.bind(this)}>
+                          Quit Game
+                      </Button>
+                  </Col>
+              </Row>
+          </form>
+      }
+      />
+      </Col>
+
+      </Row>
+          
           
       </Grid>
       </div>

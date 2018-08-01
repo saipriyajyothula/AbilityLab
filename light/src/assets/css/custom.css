@@ -90,7 +90,7 @@
 .green-side{
     height: 100px;
     border: 1px solid #ddd;
-    background-color: #cef0cd;
+    background-color: #e1f6e1;
 }
 
 .gray-side{
@@ -102,9 +102,12 @@
 .bridge{
     height: 300px;
     border: 1px solid #ddd;
+    background-color: #f2f2e2;
+/*
     background-image: url(../img/wood-bridge.png);
     background-repeat: repeat-y;
     background-size: contain;
+*/
 }
 
 .right-steps{
