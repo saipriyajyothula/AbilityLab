@@ -50,7 +50,7 @@ class CustomTooltip extends Component{
 
 class CurrentApplication extends Component{
 //  state = {bubbleChart:{catches: [{x: 0, h: 2, s: 200}, {x: 0.38, h: 1, s: 260}, {x: 2.4792, h: 1.3, s: 400}, {x: 3.56, h: 1.25, s: 280}, {x: 1.34, h: 0.5, s: 500}, {x: 4, h: 1.8, s: 200}], goals: [{x: 3.5, h: 0.6, s: 240}, {x: 1.5, h: 0.9, s: 220}, {x: 0.5, h: 1.4, s: 250}, {x: 2.5, h: 0.5, s: 210}, {x: 2.9, h: 1.6, s: 260}, {x: 1.2, h: 0.4, s: 230}]}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}};
-    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: true, difficulty: 1, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, soccerPaused: true, gameControls: 'hidden', volume: 100, customMenu: 'hidden', timeWarp: false, wheelchairMode: false, bridgeStats: {playerDamage: [{x: 2, y: 1.25, z: 1, value: 0, name: "Player Damage"}], dragonDamage: [{x: 3.3, y: 1.75, z: 1, value: 0, name: "Dragon Damage"}], dodges: [{x: 3.8, y: 1.75, z: 1, value: 0, name: "Dodges"}], leftShield: {miss: [{x: 0.3, y: 1.2, z: 1, value: 0, name: "Left Shield Dragon Hits"}], hit: [{x: 1.05, y: 1.05, z: 1, value: 0, name: "Left Shield Blocks"}]}, rightShield: {miss: [{x: 2.95, y: 1.05, z: 1, value: 0, name: "Right Shield Dragon Hits"}], hit: [{x: 3.7, y: 1.2, z: 1, value: 0, name: "Right Shield Blocks"}]}, leftFoot: {miss: [{x: 1, y: 0.2, z: 1, value: 0, name: "Left Foot Misses"}], hit: [{x: 0.5, y: 0.2, z: 1, value: 0, name: "Left Foot Hits"}]}, rightFoot: {miss: [{x: 3.5, y: 0.2, z: 1, value: 0, name: "Right Foot Misses"}], hit: [{x: 3, y: 0.2, z: 1, value: 0, name: "Right Foot Hits"}]}}};
+    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: true, difficulty: 1, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, soccerPaused: true, soccerGameControls: 'hidden', volume: 100, customMenu: 'hidden', timeWarp: false, wheelchairMode: false, bridgeStats: {playerDamage: [{x: 2, y: 1.25, z: 1, value: 0, name: "Player Damage"}], dragonDamage: [{x: 3.3, y: 1.75, z: 1, value: 0, name: "Dragon Damage"}], dodges: [{x: 3.8, y: 1.75, z: 1, value: 0, name: "Dodges"}], leftShield: {miss: [{x: 0.3, y: 1.2, z: 1, value: 0, name: "Left Shield Dragon Hits"}], hit: [{x: 1.05, y: 1.05, z: 1, value: 0, name: "Left Shield Blocks"}]}, rightShield: {miss: [{x: 2.95, y: 1.05, z: 1, value: 0, name: "Right Shield Dragon Hits"}], hit: [{x: 3.7, y: 1.2, z: 1, value: 0, name: "Right Shield Blocks"}]}, leftFoot: {miss: [{x: 1, y: 0.2, z: 1, value: 0, name: "Left Foot Misses"}], hit: [{x: 0.5, y: 0.2, z: 1, value: 0, name: "Left Foot Hits"}]}, rightFoot: {miss: [{x: 3.5, y: 0.2, z: 1, value: 0, name: "Right Foot Misses"}], hit: [{x: 3, y: 0.2, z: 1, value: 0, name: "Right Foot Hits"}]}}};
 
     handleMouseDown(e){
         chartstatus = 'down';
@@ -248,7 +248,7 @@ class CurrentApplication extends Component{
               .then((response) => {
               })
               .catch(error => console.error('Error:', error));
-            this.setState({startMenu: 'hidden', gameControls: 'visible'});
+            this.setState({startMenu: 'hidden', soccerGameControls: 'visible'});
         }
         else{
             console.log('error');
@@ -266,7 +266,7 @@ class CurrentApplication extends Component{
           .then((response) => {
           })
           .catch(error => console.error('Error:', error));
-        this.setState({startMenu: 'visible', gameControls: 'hidden'});
+        this.setState({startMenu: 'visible', soccerGameControls: 'hidden'});
         
     }
 
@@ -501,7 +501,7 @@ class CurrentApplication extends Component{
       <Card
       title="Application In Use"
       category="Soccer Penalty"
-      display={'hidden'}
+      display={this.state.soccerGameControls}
       ctTableFullWidth
       ctTableResponsive
       content={
@@ -533,7 +533,7 @@ class CurrentApplication extends Component{
       <Card
       title="Application In Use"
       category="Bridge"
-      display='visible'
+      display='hidden'
       ctTableResponsive
       content={
                   <Row>
@@ -645,14 +645,14 @@ class CurrentApplication extends Component{
       <Col md={12}>
       <Card
       title="Game Controls"
-      display={this.state.gameControls}
+      display={this.state.soccerGameControls}
       ctTableResponsive
       content={
           <form>
               <Row>
                   <Col md={6}>
                       <Button bsStyle="info" fill onClick={this.setPaused.bind(this)}>
-                          Play/Pause
+                          {this.state.soccerPaused?"Play":"Pause"}
                       </Button>
                   </Col>
                   <Col md={6}>
@@ -713,7 +713,7 @@ class CurrentApplication extends Component{
                   </Col>
                   <Col md={5}>
                       <Slider
-                          label='Maximum height'
+                          label={'Maximum height: '+this.state.maxHeight}
                           number={7} 
                           min={0.2}
                           max={2.0}
@@ -724,7 +724,7 @@ class CurrentApplication extends Component{
                   </Col>
                   <Col md={5}>
                       <Slider
-                          label='Volume'
+                          label={'Volume: '+this.state.volume}
                           number={8} 
                           min={0}
                           max={100}
@@ -745,7 +745,7 @@ class CurrentApplication extends Component{
                                   <Row>
                                       <Col md={6}>
                                           <Slider
-                                              label='Shoot distance'
+                                              label={'Shoot distance: '+this.state.shootDistance}
                                               number={9} 
                                               min={0}
                                               max={10}
@@ -756,7 +756,7 @@ class CurrentApplication extends Component{
                                       </Col>
                                       <Col md={6}>
                                           <Slider
-                                              label='Ball speed'
+                                              label={'Ball speed: '+this.state.ballSpeed}
                                               number={10} 
                                               min={1} 
                                               max={40}
