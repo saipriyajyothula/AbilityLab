@@ -50,7 +50,7 @@ class CustomTooltip extends Component{
 
 class CurrentApplication extends Component{
 //  state = {bubbleChart:{catches: [{x: 0, h: 2, s: 200}, {x: 0.38, h: 1, s: 260}, {x: 2.4792, h: 1.3, s: 400}, {x: 3.56, h: 1.25, s: 280}, {x: 1.34, h: 0.5, s: 500}, {x: 4, h: 1.8, s: 200}], goals: [{x: 3.5, h: 0.6, s: 240}, {x: 1.5, h: 0.9, s: 220}, {x: 0.5, h: 1.4, s: 250}, {x: 2.5, h: 0.5, s: 210}, {x: 2.9, h: 1.6, s: 260}, {x: 1.2, h: 0.4, s: 230}]}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}};
-    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: true, difficulty: 1, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, soccerPaused: true, soccerGameControls: 'hidden', bridgeGameControls: 'hidden', volume: 100, customMenu: 'hidden', timeWarp: false, wheelchairMode: false, bridgeStats: {playerDamage: [{x: 2, y: 1.25, z: 1, value: 0, name: "Player Damage"}], dragonDamage: [{x: 3.3, y: 1.75, z: 1, value: 0, name: "Dragon Damage"}], dodges: [{x: 3.8, y: 1.75, z: 1, value: 0, name: "Dodges"}], leftShield: {miss: [{x: 0.3, y: 1.2, z: 1, value: 0, name: "Left Shield Dragon Hits"}], hit: [{x: 1.05, y: 1.05, z: 1, value: 0, name: "Left Shield Blocks"}]}, rightShield: {miss: [{x: 2.95, y: 1.05, z: 1, value: 0, name: "Right Shield Dragon Hits"}], hit: [{x: 3.7, y: 1.2, z: 1, value: 0, name: "Right Shield Blocks"}]}, leftFoot: {miss: [{x: 1, y: 0.2, z: 1, value: 0, name: "Left Foot Misses"}], hit: [{x: 0.5, y: 0.2, z: 1, value: 0, name: "Left Foot Hits"}]}, rightFoot: {miss: [{x: 3.5, y: 0.2, z: 1, value: 0, name: "Right Foot Misses"}], hit: [{x: 3, y: 0.2, z: 1, value: 0, name: "Right Foot Hits"}]}}};
+    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: true, difficulty: 1, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, soccerPaused: true, soccerGameControls: 'hidden', bridgeGameControls: 'visible', volume: 100, customMenu: 'hidden', timeWarp: false, wheelchairMode: false, bridgeStats: {playerDamage: [{x: 2, y: 1.25, z: 1, value: 0, name: "Player Damage"}], dragonDamage: [{x: 3.3, y: 1.75, z: 1, value: 0, name: "Dragon Damage"}], dodges: [{x: 3.8, y: 1.75, z: 1, value: 0, name: "Dodges"}], leftShield: {miss: [{x: 0.3, y: 1.2, z: 1, value: 0, name: "Left Shield Dragon Hits"}], hit: [{x: 1.05, y: 1.05, z: 1, value: 0, name: "Left Shield Blocks"}]}, rightShield: {miss: [{x: 2.95, y: 1.05, z: 1, value: 0, name: "Right Shield Dragon Hits"}], hit: [{x: 3.7, y: 1.2, z: 1, value: 0, name: "Right Shield Blocks"}]}, leftFoot: {miss: [{x: 1, y: 0.2, z: 1, value: 0, name: "Left Foot Misses"}], hit: [{x: 0.5, y: 0.2, z: 1, value: 0, name: "Left Foot Hits"}]}, rightFoot: {miss: [{x: 3.5, y: 0.2, z: 1, value: 0, name: "Right Foot Misses"}], hit: [{x: 3, y: 0.2, z: 1, value: 0, name: "Right Foot Hits"}]}}, bridgePaused: true, dragonControl: 1, locationControl: 1, oppositeControl: 0, clockwiseControl: 0, dragonDifficulty: 1, showTrajectory: true, easyPickup: true};
 
     handleMouseDown(e){
         chartstatus = 'down';
@@ -301,6 +301,21 @@ class CurrentApplication extends Component{
           .catch(error => console.error('Error:', error));
     }
 
+    bridgePaused(){
+        const paused = this.state.bridgePaused;
+        this.setState({bridgePaused: !paused});
+//        fetch('/api/soccerPenalty/current/setPaused', {
+//          method: 'POST',
+//          headers: {
+//            'Content-Type': 'application/json',
+//          },
+//          body: JSON.stringify({value: !paused}),
+//          })
+//          .then((response) => {
+//          })
+//          .catch(error => console.error('Error:', error));
+    }
+
     handleLevelChange(e){
         const level = parseInt(e.target.value);
         if(level>=0 && level<=10){
@@ -364,7 +379,124 @@ class CurrentApplication extends Component{
               .catch(error => console.error('Error:', error));
         }
     }
+
+    handleDragonControl(e){
+        const dragonControl = e.target.value;
+        if(this.state.dragonControl!=dragonControl){
+            this.setState({ dragonControl: dragonControl});
+            fetch('/api/bridge/current/DragonMovement', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({value: dragonControl}),
+              })
+              .then((response) => {
+              })
+              .catch(error => console.error('Error:', error));
+        }
+    }
+
+        handleLocationControl(e){
+        const locationControl = e.target.value;
+        if(this.state.locationControl!=locationControl){
+            this.setState({ locationControl: locationControl});
+            fetch('/api/bridge/current/DragonPosition', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({value: locationControl}),
+              })
+              .then((response) => {
+              })
+              .catch(error => console.error('Error:', error));
+        }
+    }
+
+        handleOppositeControl(e){
+        const oppositeControl = e.target.value;
+        if(this.state.oppositeControl!=oppositeControl){
+            this.setState({ oppositeControl: oppositeControl});
+            fetch('/api/bridge/current/ByPositionOrientation', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({value: oppositeControl}),
+              })
+              .then((response) => {
+              })
+              .catch(error => console.error('Error:', error));
+        }
+    }
+
+        handleClockwiseControl(e){
+        const clockwiseControl = e.target.value;
+        if(this.state.clockwiseControl!=clockwiseControl){
+            this.setState({ clockwiseControl: clockwiseControl});
+            fetch('/api/bridge/current/OnHitDirection', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({value: clockwiseControl}),
+              })
+              .then((response) => {
+              })
+              .catch(error => console.error('Error:', error));
+        }
+    }
+
+    handleDragonDifficulty(e){
+        const dragonDifficulty = e.target.value;
+        if(this.state.dragonDifficulty!=dragonDifficulty){
+            this.setState({ dragonDifficulty: dragonDifficulty});
+            fetch('/api/bridge/current/DragonDifficulty', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({value: dragonDifficulty}),
+              })
+              .then((response) => {
+              })
+              .catch(error => console.error('Error:', error));
+        }
+    }
     
+        changeTrajectory(){
+        const st = this.state.showTrajectory;
+        this.setState({showTrajectory: !st});
+        fetch('/api/bridge/current/TrajectorySetting', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({value: !st}),
+          })
+          .then((response) => {
+          })
+          .catch(error => console.error('Error:', error));
+        
+    }
+
+        changePickup(){
+        const pickup = this.state.easyPickup;
+        this.setState({easyPickup: !pickup});
+        fetch('/api/bridge/current/EasyShieldMode', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({value: !pickup}),
+          })
+          .then((response) => {
+          })
+          .catch(error => console.error('Error:', error));
+        
+    }
+
      changeShootDistance(e){
          const sd = this.state.shootDistance;
          this.setState({ shootDistance: e.target.value});
@@ -824,9 +956,112 @@ class CurrentApplication extends Component{
           <form>
               <Row>
                   <Col md={6}>
+                      <Button bsStyle="info" fill onClick={this.bridgePaused.bind(this)}>
+                          {this.state.bridgePaused?"Play":"Pause"}
+                      </Button>
+                  </Col>
+                  <Col md={6}>
                       <Button bsStyle="info" pullRight fill onClick={this.quitGame.bind(this)}>
                           Quit Game
                       </Button>
+                  </Col>
+              </Row>
+              <Row>
+                  <Col md={7}>
+                      <Card
+                          title="Dragon Controller"
+                          ctTableResponsive
+                          content={
+                              <div>
+                                  <Row>
+                                      <Col md={12}>
+                                          <FormGroup>
+                                              <Row>
+                                                  <Radio name="dragonControl" value={0} label="Pick dragon location" number={11} onClick={this.handleDragonControl.bind(this)} checked={this.state.dragonControl==0}>
+                                                  </Radio>
+                                              </Row>
+                                              <Row>
+                                                  <Col md={1}>
+                                                  </Col>
+                                                  <Radio name="locationControl" value={1} label="1" number={15} onClick={this.handleLocationControl.bind(this)} disabled={this.state.dragonControl!=0} checked={this.state.locationControl==1}>
+                                                  </Radio>
+                                                  <Radio name="locationControl" value={2} label="2" number={16} onClick={this.handleLocationControl.bind(this)} disabled={this.state.dragonControl!=0} checked={this.state.locationControl==2}>
+                                                  </Radio>
+                                                  <Radio name="locationControl" value={3} label="3" number={17} onClick={this.handleLocationControl.bind(this)} disabled={this.state.dragonControl!=0} checked={this.state.locationControl==3}>
+                                                  </Radio>
+                                                  <Radio name="locationControl" value={4} label="4" number={18} onClick={this.handleLocationControl.bind(this)} disabled={this.state.dragonControl!=0} checked={this.state.locationControl==4}>
+                                                  </Radio>
+                                              </Row>
+                                              <Row>
+                                                  <Radio name="dragonControl" value={2} label="Move based on player location" number={12} onClick={this.handleDragonControl.bind(this)} checked={this.state.dragonControl==2}>
+                                                  </Radio>
+                                              </Row>
+                                              <Row>
+                                                  <Col md={1}>
+                                                  </Col>
+                                                  <Radio name="oppositeControl" value={0} label="Opposite player" number={19} onClick={this.handleOppositeControl.bind(this)} disabled={this.state.dragonControl!=2} checked={this.state.oppositeControl==0}>
+                                                  </Radio>
+                                                  <Radio name="oppositeControl" value={1} label="Same as player" number={20} onClick={this.handleOppositeControl.bind(this)} disabled={this.state.dragonControl!=2} checked={this.state.oppositeControl==1}>
+                                                  </Radio>
+                                              </Row>
+                                              <Row>
+                                                  <Radio name="dragonControl" value={1} label="Move on dragon hit" number={13} onClick={this.handleDragonControl.bind(this)} checked={this.state.dragonControl==1}>
+                                                  </Radio>
+                                              </Row>
+                                              <Row>
+                                                  <Col md={1}>
+                                                  </Col>
+                                                  <Radio name="clockwiseControl" value={0} label="Clockwise" number={21} onClick={this.handleClockwiseControl.bind(this)} disabled={this.state.dragonControl!=1} checked={this.state.clockwiseControl==0}>
+                                                  </Radio>
+                                                  <Radio name="clockwiseControl" value={1} label="Counter clockwise" number={22} onClick={this.handleClockwiseControl.bind(this)} disabled={this.state.dragonControl!=1} checked={this.state.clockwiseControl==1}>
+                                                  </Radio>
+                                              </Row>
+                                              <Row>
+                                                  <Radio name="dragonControl" value={3} label="Random" number={14} onClick={this.handleDragonControl.bind(this)} checked={this.state.dragonControl==3}>
+                                                  </Radio>
+                                              </Row>
+                                          </FormGroup>
+                                      </Col>
+                                  </Row>
+                              </div>
+                          }
+                          />
+                  </Col>
+                  <Col md={5}>
+                      <Card
+                          title="Difficulty"
+                          ctTableResponsive
+                          content={
+                              <div>
+                                  <Row>
+                                      <Col md={12}>
+                                          <FormGroup>
+                                              <Row>
+                                                  <Radio name="dragonDifficulty" value={0} label="Easy" number={23} onClick={this.handleDragonDifficulty.bind(this)} checked={this.state.dragonDifficulty==0}>
+                                                  </Radio>
+                                                  <Radio name="dragonDifficulty" value={1} label="Medium" number={24} onClick={this.handleDragonDifficulty.bind(this)} checked={this.state.dragonDifficulty==1}>
+                                                  </Radio>
+                                                  <Radio name="dragonDifficulty" value={2} label="Hard" number={25} onClick={this.handleDragonDifficulty.bind(this)} checked={this.state.dragonDifficulty==2}>
+                                                  </Radio>
+                                              </Row>
+                                              <Row>
+                                                  <Col md={1}>
+                                                  </Col>
+                                                  <Checkbox label='Show projectile trajectory' checked={this.state.showTrajectory} number={26} onClick={this.changeTrajectory.bind(this)}>
+                                                  </Checkbox>
+                                              </Row>
+                                              <Row>
+                                                  <Col md={1}>
+                                                  </Col>
+                                                  <Checkbox label='Easy shield pickup' checked={this.state.easyPickup} number={27} onClick={this.changePickup.bind(this)}>
+                                                  </Checkbox>
+                                              </Row>
+                                          </FormGroup>
+                                      </Col>
+                                  </Row>
+                              </div>
+                          }
+                          />
                   </Col>
               </Row>
           </form>
