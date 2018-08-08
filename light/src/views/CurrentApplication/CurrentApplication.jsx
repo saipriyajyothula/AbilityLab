@@ -605,7 +605,7 @@ class CurrentApplication extends Component{
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({woodBridge: this.state.bridgeWidth, stoneBridge: this.state.stepsWidth, platform1: this.state.grayWidth, platform2: greenWidth}),
+          body: JSON.stringify({woodBridge: this.state.bridgeWidth, stoneBridge: this.state.stepsWidth, platform1: this.state.grayWidth, platform2: this.state.greenWidth}),
           })
           .then((response) => {
           })
