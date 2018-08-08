@@ -12,6 +12,8 @@ var soccerPenaltyControls = {adaptiveDifficulty: true, level: 1, maxHeight: 1.75
 var soccerPenaltyIsPaused = true;
 
 var bridgePlayerData = {playerDamage: 0, dragonDamage: 0, dodges: 0, leftShieldReflects: 0, leftShieldHits: 0, rightShieldReflects:0, rightShieldHits: 0, leftFootMisses:0 ,leftFootHits: 0, rightFootMisses:0 ,rightFootHits: 0}
+var bridgePlatformsData = {woodBridge:2, stoneBridge:2, platform1:2, platform2:2};
+var bridgeDragonData = {dragonMovement: 0, onHitDirection: 0, byPositionOrientation: 0, trajectorySetting: true, easyShieldMode: true, dragonDifficulty: 0, dragonPosition: 0};
 
 var appRunning = null;
 
@@ -238,6 +240,15 @@ var appRouter = function (app) {
     res.end("ok");
   });
 
+  app.post('/api/bridge/current/PlatformsWidth', function (req, res) {
+
+    console.log(req.body);
+    bridgePlatformsData = req.body;
+    eventEmitter.emit('bridgeUpdatePlatformsWidth');
+    res.end("ok");
+  });
+
+
   app.post('/api/bridge/current/PlayerStats', function (req, res) {
 
     console.log(req.body);
@@ -248,6 +259,8 @@ var appRouter = function (app) {
 
 
   app.post('/api/bridge/current/newSession', function(req, res){
+    bridgePlatformsData = {woodBridge:2, stoneBridge:2, platform1:2, platform2:2};
+    bridgeDragonData = {dragonMovement: 0, onHitDirection: 0, byPositionOrientation: 0, trajectorySetting: true, easyShieldMode: true, dragonDifficulty: 0, dragonPosition: 0};
     var newSessionId = 0;
     db.serialize(function(){
       db.get("SELECT MAX(`SessionId`) AS  'OldSessionId' FROM `GameData`", function(err, row) {
@@ -258,6 +271,43 @@ var appRouter = function (app) {
 
     });
   });
+
+  app.post('/api/bridge/current/DragonMovement', function (req, res) {
+    bridgeDragonData.dragonMovement = req.body.value;
+    eventEmitter.emit('bridgeUpdateDragonData');
+    res.end("ok");
+  });
+  app.post('/api/bridge/current/DragonDifficulty', function (req, res) {
+    bridgeDragonData.dragonDifficulty = req.body.value;
+    eventEmitter.emit('bridgeUpdateDragonData');
+    res.end("ok");
+  });
+  app.post('/api/bridge/current/DragonPosition', function (req, res) {
+    bridgeDragonData.dragonPosition = req.body.value;
+    eventEmitter.emit('bridgeUpdateDragonData');
+    res.end("ok");
+  });
+  app.post('/api/bridge/current/OnHitDirection', function (req, res) {
+    bridgeDragonData.onHitDirection = req.body.value;
+    eventEmitter.emit('bridgeUpdateDragonData');
+    res.end("ok");
+  });
+  app.post('/api/bridge/current/ByPositionOrientation', function (req, res) {
+    bridgeDragonData.byPositionOrientation = req.body.value;
+    eventEmitter.emit('bridgeUpdateDragonData');
+    res.end("ok");
+  });
+  app.post('/api/bridge/current/EasyShieldMode', function (req, res) {
+    bridgeDragonData.easyShieldMode = req.body.value;
+    eventEmitter.emit('bridgeUpdateDragonData');
+    res.end("ok");
+  });
+  app.post('/api/bridge/current/TrajectorySetting', function (req, res) {
+    bridgeDragonData.trajectorySetting = req.body.value;
+    eventEmitter.emit('bridgeUpdateDragonData');
+    res.end("ok");
+  });
+
 
   app.get('/api/currentApplication', function (req, res) {
     if(appRunning != null){
@@ -281,7 +331,10 @@ var appRouter = function (app) {
       eventEmitter.removeListener('updateScore', soccerPenaltyFunc1);
       eventEmitter.removeListener('soccerUpdatePlayPause', soccerPenaltyFunc2 );
       eventEmitter.removeListener('soccerUpdateLevel', soccerPenaltyFunc3 );
+      eventEmitter.removeListener('soccerPenaltyKilled', soccerPenaltyFunc4);
       eventEmitter.removeListener('bridgeUpdatePlayerStats', bridgeFunc1 );
+      eventEmitter.removeListener('bridgeKilled', bridgeFunc2);
+
     });
     ws.on('message', function(msg) {
       console.log(msg);
@@ -316,18 +369,29 @@ var appRouter = function (app) {
       var toSend = {"GameId": "soccerPenalty", "message":"updateLevel", "level": soccerPenaltyControls.level, "difficulty": soccerPenaltyControls.difficultyLevel };
       ws.send(JSON.stringify(toSend));
     }
+    var soccerPenaltyFunc4 = function(){
+      var toSend = {"GameId": "soccerPenalty", "message":"killed"};
+      ws.send(JSON.stringify(toSend));
+    }
 
     var bridgeFunc1 = function(){
       var toSend = {"GameId": "bridge", "message":"updatePlayerStatistics", "data": bridgePlayerData};
       console.log(bridgePlayerData);
       ws.send(JSON.stringify(toSend));
     }
+    var bridgeFunc2 = function(){
+      var toSend = {"GameId": "bridge", "message":"killed"};
+      ws.send(JSON.stringify(toSend));
+    }
+
 
 
 
     eventEmitter.on('updateScore', soccerPenaltyFunc1 );
     eventEmitter.on('soccerUpdatePlayPause', soccerPenaltyFunc2 );
     eventEmitter.on('soccerUpdateLevel', soccerPenaltyFunc3 );
+    eventEmitter.on('soccerPenaltyKilled', soccerPenaltyFunc4);
+    eventEmitter.on('bridgeKilled', bridgeFunc2);
     eventEmitter.on('bridgeUpdatePlayerStats', bridgeFunc1 );
 
   });
@@ -368,6 +432,7 @@ var appRouter = function (app) {
       eventEmitter.removeListener('setChartRect', list3 );
       eventEmitter.removeListener('setSoccerPenaltyControls', updateSoccerPenaltyControlsTimeouted );
       eventEmitter.removeListener('setSoccerPenaltyPlayPause', updateSoccerPlayPause );
+      eventEmitter.emit('soccerPenaltyKilled');
     });
     var list2 = function(){
       ws.send(JSON.stringify({message: "quit"}));
@@ -396,11 +461,35 @@ var appRouter = function (app) {
   });
 
   app.ws('/socket/bridgeControl', function(ws, req) {
+    appRunning = "bridge";
+
+    ws.on('close', function() {
+      appRunning = null;
+      console.log('closed');
+      eventEmitter.removeListener('sendApplicationQuit', list2 );
+      eventEmitter.removeListener('bridgeUpdatePlatformsWidth', list3 );
+      eventEmitter.removeListener('bridgeUpdateDragonData', list4);
+
+      eventEmitter.emit('bridgeKilled');
+    });
+    var list2 = function(){
+      ws.send(JSON.stringify({message: "quit"}));
+    }
+
+    var list3 = function(){
+      ws.send(JSON.stringify({message: "widthControl",data: bridgePlatformsData}));
+    }
+    var list4 = function(){
+      ws.send(JSON.stringify({message: "dragonControl",data: bridgeDragonData}));
+    }
+
+    eventEmitter.on('sendApplicationQuit', list2 );
+    eventEmitter.on('bridgeUpdatePlatformsWidth', list3);
+    eventEmitter.on('bridgeUpdateDragonData', list4);
 
     ws.on('message', function(msg) {
       console.log(msg);
       var message = JSON.parse(msg);
-
       ws.send("received");
     });
   });
