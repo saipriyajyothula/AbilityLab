@@ -50,7 +50,7 @@ class CustomTooltip extends Component{
 
 class CurrentApplication extends Component{
 //  state = {bubbleChart:{catches: [{x: 0, h: 2, s: 200}, {x: 0.38, h: 1, s: 260}, {x: 2.4792, h: 1.3, s: 400}, {x: 3.56, h: 1.25, s: 280}, {x: 1.34, h: 0.5, s: 500}, {x: 4, h: 1.8, s: 200}], goals: [{x: 3.5, h: 0.6, s: 240}, {x: 1.5, h: 0.9, s: 220}, {x: 0.5, h: 1.4, s: 250}, {x: 2.5, h: 0.5, s: 210}, {x: 2.9, h: 1.6, s: 260}, {x: 1.2, h: 0.4, s: 230}]}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}};
-    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: true, difficulty: 1, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, soccerPaused: true, soccerGameControls: 'hidden', bridgeGameControls: 'visible', volume: 100, customMenu: 'hidden', timeWarp: false, wheelchairMode: false, bridgeStats: {playerDamage: [{x: 2, y: 1.25, z: 1, value: 0, name: "Player Damage"}], dragonDamage: [{x: 3.3, y: 1.75, z: 1, value: 0, name: "Dragon Damage"}], dodges: [{x: 3.8, y: 1.75, z: 1, value: 0, name: "Dodges"}], leftShield: {miss: [{x: 0.3, y: 1.2, z: 1, value: 0, name: "Left Shield Dragon Hits"}], hit: [{x: 1.05, y: 1.05, z: 1, value: 0, name: "Left Shield Blocks"}]}, rightShield: {miss: [{x: 2.95, y: 1.05, z: 1, value: 0, name: "Right Shield Dragon Hits"}], hit: [{x: 3.7, y: 1.2, z: 1, value: 0, name: "Right Shield Blocks"}]}, leftFoot: {miss: [{x: 1, y: 0.2, z: 1, value: 0, name: "Left Foot Misses"}], hit: [{x: 0.5, y: 0.2, z: 1, value: 0, name: "Left Foot Hits"}]}, rightFoot: {miss: [{x: 3.5, y: 0.2, z: 1, value: 0, name: "Right Foot Misses"}], hit: [{x: 3, y: 0.2, z: 1, value: 0, name: "Right Foot Hits"}]}}, bridgePaused: true, dragonControl: 1, locationControl: 1, oppositeControl: 0, clockwiseControl: 0, dragonDifficulty: 1, showTrajectory: true, easyPickup: true};
+    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: true, difficulty: 1, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, soccerPaused: true, soccerGameControls: 'hidden', bridgeGameControls: 'visible', volume: 100, customMenu: 'hidden', timeWarp: false, wheelchairMode: false, bridgeStats: {playerDamage: [{x: 2, y: 1.25, z: 1, value: 0, name: "Player Damage"}], dragonDamage: [{x: 3.3, y: 1.75, z: 1, value: 0, name: "Dragon Damage"}], dodges: [{x: 3.8, y: 1.75, z: 1, value: 0, name: "Dodges"}], leftShield: {miss: [{x: 0.3, y: 1.2, z: 1, value: 0, name: "Left Shield Dragon Hits"}], hit: [{x: 1.05, y: 1.05, z: 1, value: 0, name: "Left Shield Blocks"}]}, rightShield: {miss: [{x: 2.95, y: 1.05, z: 1, value: 0, name: "Right Shield Dragon Hits"}], hit: [{x: 3.7, y: 1.2, z: 1, value: 0, name: "Right Shield Blocks"}]}, leftFoot: {miss: [{x: 1, y: 0.2, z: 1, value: 0, name: "Left Foot Misses"}], hit: [{x: 0.5, y: 0.2, z: 1, value: 0, name: "Left Foot Hits"}]}, rightFoot: {miss: [{x: 3.5, y: 0.2, z: 1, value: 0, name: "Right Foot Misses"}], hit: [{x: 3, y: 0.2, z: 1, value: 0, name: "Right Foot Hits"}]}}, dragonControl: 1, locationControl: 1, oppositeControl: 0, clockwiseControl: 0, dragonDifficulty: 1, showTrajectory: true, easyPickup: true, widthStep: 25, greenWidth: 3, grayWidth: 3, bridgeWidth: 6, stepsWidth: 4};
 
     handleMouseDown(e){
         chartstatus = 'down';
@@ -299,21 +299,6 @@ class CurrentApplication extends Component{
           .then((response) => {
           })
           .catch(error => console.error('Error:', error));
-    }
-
-    bridgePaused(){
-        const paused = this.state.bridgePaused;
-        this.setState({bridgePaused: !paused});
-//        fetch('/api/soccerPenalty/current/setPaused', {
-//          method: 'POST',
-//          headers: {
-//            'Content-Type': 'application/json',
-//          },
-//          body: JSON.stringify({value: !paused}),
-//          })
-//          .then((response) => {
-//          })
-//          .catch(error => console.error('Error:', error));
     }
 
     handleLevelChange(e){
@@ -593,7 +578,40 @@ class CurrentApplication extends Component{
         
     }
 
+    increaseGreenWidth(){
+        const greenWidth = this.state.greenWidth;
+        if(greenWidth<7){
+            this.setState({greenWidth: (greenWidth+1)});
+        }
+        fetch('/api/bridge/current/PlatformsWidth', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({woodBridge: this.state.bridgeWidth, stoneBridge: this.state.stepsWidth, platform1: this.state.grayWidth, platform2: greenWidth}),
+          })
+          .then((response) => {
+          })
+          .catch(error => console.error('Error:', error));
+    }
 
+    decreaseGreenWidth(){
+        const greenWidth = this.state.greenWidth;
+        if(greenWidth>1){
+            this.setState({greenWidth: (greenWidth-1)});
+        }
+        fetch('/api/bridge/current/PlatformsWidth', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({woodBridge: this.state.bridgeWidth, stoneBridge: this.state.stepsWidth, platform1: this.state.grayWidth, platform2: greenWidth}),
+          })
+          .then((response) => {
+          })
+          .catch(error => console.error('Error:', error));
+    }
+    
   componentDidMount(){
     
     fetch('/api/currentApplication', {
@@ -710,23 +728,28 @@ class CurrentApplication extends Component{
                           title="Top View"
                           ctTableResponsive
                           content={
-                              <div>
-                                  <Row>
-                                      <Col md={12}>
-                                          <div className="green-side">
+                              <div className="top-view">
+                                          <div className="green-width">
+                                              <Row>
+                                                  <Col md={5}>
+                                                  </Col>
+                                                  <Col md={3}>
+                                                  <Button className="increment-button" bsStyle="info" onClick={this.decreaseGreenWidth.bind(this)}>
+                                                      -
+                                                  </Button>
+                                                  {" "+this.state.greenWidth+" "}
+                                                  <Button className="increment-button" bsStyle="info" onClick={this.increaseGreenWidth.bind(this)}>
+                                                      +
+                                                  </Button>
+                                                  </Col>
+                                                  <Col md={4}>
+                                                  </Col>
+                                              </Row>
                                           </div>
-                                      </Col>
-                                  </Row>
-                                  <Row>
-                                      <Col md={3}>
+                                          <div className="green-side" style={{height: this.state.widthStep*this.state.greenWidth+"px"}}>
+                                          </div>
                                           <div className="bridge">
                                           </div>
-                                      </Col>
-                                      <Col md={3}>
-                                      </Col>
-                                      <Col md={3}>
-                                      </Col>
-                                      <Col md={3}>
                                           <div className="steps">
                                               <div className="right-steps">
                                               </div>
@@ -737,14 +760,10 @@ class CurrentApplication extends Component{
                                               <div className="left-steps">
                                               </div>
                                           </div>
-                                      </Col>
-                                  </Row>
-                                  <Row>
-                                      <Col md={12}>
+                                      
                                           <div className="gray-side">
                                           </div>
-                                      </Col>
-                                  </Row>
+                                      
                               </div>
                           }
                         />
@@ -955,18 +974,6 @@ class CurrentApplication extends Component{
       content={
           <form>
               <Row>
-                  <Col md={6}>
-                      <Button bsStyle="info" fill onClick={this.bridgePaused.bind(this)}>
-                          {this.state.bridgePaused?"Play":"Pause"}
-                      </Button>
-                  </Col>
-                  <Col md={6}>
-                      <Button bsStyle="info" pullRight fill onClick={this.quitGame.bind(this)}>
-                          Quit Game
-                      </Button>
-                  </Col>
-              </Row>
-              <Row>
                   <Col md={7}>
                       <Card
                           title="Dragon Controller"
@@ -1062,6 +1069,17 @@ class CurrentApplication extends Component{
                               </div>
                           }
                           />
+                      <Row>
+                          <Col md={4}>
+                          </Col>
+                          <Col md={4}>
+                              <Button bsStyle="info" fill onClick={this.quitGame.bind(this)}>
+                                  Quit Game
+                              </Button>
+                          </Col>
+                          <Col md={4}>
+                          </Col>
+                      </Row>
                   </Col>
               </Row>
           </form>
