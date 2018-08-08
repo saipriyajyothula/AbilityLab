@@ -580,36 +580,38 @@ class CurrentApplication extends Component{
 
     increaseGreenWidth(){
         const greenWidth = this.state.greenWidth;
+        console.log(greenWidth);
         if(greenWidth<7){
             this.setState({greenWidth: (greenWidth+1)});
-        }
-        fetch('/api/bridge/current/PlatformsWidth', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({woodBridge: this.state.bridgeWidth, stoneBridge: this.state.stepsWidth, platform1: this.state.grayWidth, platform2: this.state.greenWidth}),
-          })
-          .then((response) => {
-          })
-          .catch(error => console.error('Error:', error));
+            fetch('/api/bridge/current/PlatformsWidth', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({woodBridge: this.state.bridgeWidth, stoneBridge: this.state.stepsWidth, platform1: this.state.grayWidth, platform2: greenWidth+1}),
+              })
+              .then((response) => {
+              })
+              .catch(error => console.error('Error:', error));
+        }   
     }
 
     decreaseGreenWidth(){
         const greenWidth = this.state.greenWidth;
+        console.log(greenWidth);
         if(greenWidth>1){
             this.setState({greenWidth: (greenWidth-1)});
+            fetch('/api/bridge/current/PlatformsWidth', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({woodBridge: this.state.bridgeWidth, stoneBridge: this.state.stepsWidth, platform1: this.state.grayWidth, platform2: greenWidth-1}),
+              })
+              .then((response) => {
+              })
+              .catch(error => console.error('Error:', error));
         }
-        fetch('/api/bridge/current/PlatformsWidth', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({woodBridge: this.state.bridgeWidth, stoneBridge: this.state.stepsWidth, platform1: this.state.grayWidth, platform2: this.state.greenWidth}),
-          })
-          .then((response) => {
-          })
-          .catch(error => console.error('Error:', error));
     }
     
   componentDidMount(){
