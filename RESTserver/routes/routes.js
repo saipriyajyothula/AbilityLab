@@ -14,7 +14,7 @@ var soccerPenaltyIsPaused = true;
 var bridgePlayerData = {playerDamage: 0, dragonDamage: 0, dodges: 0, leftShieldReflects: 0, leftShieldHits: 0, rightShieldReflects:0, rightShieldHits: 0, leftFootMisses:0 ,leftFootHits: 0, rightFootMisses:0 ,rightFootHits: 0}
 var bridgePlatformsData = {woodBridge:2, stoneBridge:2, platform1:2, platform2:2};
 var bridgeDragonData = {dragonMovement: 0, onHitDirection: 0, byPositionOrientation: 0, trajectorySetting: true, easyShieldMode: true, dragonDifficulty: 0, dragonPosition: 0};
-
+var bridgeLastStep;
 var appRunning = null;
 
 // open the database
@@ -52,12 +52,7 @@ var appRouter = function (app) {
     res.end("ok");
   });
 
-  app.post('/api/bridge/showStep', function (req, res) {
-    var aWss = expressWs.getWss('/socket/websocket');
-    console.log(req.body);
-    eventEmitter.emit('bridge here');
-    res.end("ok");
-  });
+
 
   app.post('/api/soccerPenalty/addPatient', function (req, res) {
     var aWss = expressWs.getWss('/socket/websocket');
@@ -308,6 +303,14 @@ var appRouter = function (app) {
     res.end("ok");
   });
 
+  app.post('/api/bridge/showStep', function (req, res) {
+    var aWss = expressWs.getWss('/socket/websocket');
+    console.log(req.body);
+    bridgeLastStep = req.body;
+    eventEmitter.emit('bridgeShowStep');
+    res.end("ok");
+  });
+
 
   app.get('/api/currentApplication', function (req, res) {
     if(appRunning != null){
@@ -334,6 +337,7 @@ var appRouter = function (app) {
       eventEmitter.removeListener('soccerPenaltyKilled', soccerPenaltyFunc4);
       eventEmitter.removeListener('bridgeUpdatePlayerStats', bridgeFunc1 );
       eventEmitter.removeListener('bridgeKilled', bridgeFunc2);
+      eventEmitter.removeListener('bridgeShowStep', bridgeFunc3 );
 
     });
     ws.on('message', function(msg) {
@@ -383,6 +387,10 @@ var appRouter = function (app) {
       var toSend = {"GameId": "bridge", "message":"killed"};
       ws.send(JSON.stringify(toSend));
     }
+    var bridgeFunc3 = function(){
+      var toSend = {"GameId": "bridge", "message":"step", "data": bridgeLastStep};
+      ws.send(JSON.stringify(toSend));
+    }
 
 
 
@@ -393,6 +401,7 @@ var appRouter = function (app) {
     eventEmitter.on('soccerPenaltyKilled', soccerPenaltyFunc4);
     eventEmitter.on('bridgeKilled', bridgeFunc2);
     eventEmitter.on('bridgeUpdatePlayerStats', bridgeFunc1 );
+    eventEmitter.on('bridgeShowStep', bridgeFunc3 );
 
   });
 
