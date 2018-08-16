@@ -20,6 +20,9 @@ var chartPoint = {x1: 0, y1: 0, x2: 0, y2: 0};
 
 var availableGames = ['SoccerPenalty', 'Bridge'];
 
+//these coordinates are from the unity scene. green+bridge: (x1, z1), green+steps: (x2, z2), gray+bridge: (x3, z3), gray+steps: (x4, z4)
+var coordinates = {x1: 43.19, z1: 58.29, x2: 45.51, z2: 55.26, x3: 40.7, z3: 56.35, x4: 43.01, y4: 53.32, angle: -128.18};
+
 class CustomTooltip extends Component{
   propTypes: {
     type: PropTypes.string,
@@ -50,7 +53,7 @@ class CustomTooltip extends Component{
 
 class CurrentApplication extends Component{
 //  state = {bubbleChart:{catches: [{x: 0, h: 2, s: 200}, {x: 0.38, h: 1, s: 260}, {x: 2.4792, h: 1.3, s: 400}, {x: 3.56, h: 1.25, s: 280}, {x: 1.34, h: 0.5, s: 500}, {x: 4, h: 1.8, s: 200}], goals: [{x: 3.5, h: 0.6, s: 240}, {x: 1.5, h: 0.9, s: 220}, {x: 0.5, h: 1.4, s: 250}, {x: 2.5, h: 0.5, s: 210}, {x: 2.9, h: 1.6, s: 260}, {x: 1.2, h: 0.4, s: 230}]}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}};
-    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: true, difficulty: 1, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, soccerPaused: true, soccerGameControls: 'hidden', bridgeGameControls: 'visible', volume: 100, customMenu: 'hidden', timeWarp: false, wheelchairMode: false, bridgeStats: {playerDamage: [{x: 2, y: 1.25, z: 1, value: 0, name: "Player Damage"}], dragonDamage: [{x: 3.3, y: 1.75, z: 1, value: 0, name: "Dragon Damage"}], dodges: [{x: 3.8, y: 1.75, z: 1, value: 0, name: "Dodges"}], leftShield: {miss: [{x: 0.3, y: 1.2, z: 1, value: 0, name: "Left Shield Dragon Hits"}], hit: [{x: 1.05, y: 1.05, z: 1, value: 0, name: "Left Shield Blocks"}]}, rightShield: {miss: [{x: 2.95, y: 1.05, z: 1, value: 0, name: "Right Shield Dragon Hits"}], hit: [{x: 3.7, y: 1.2, z: 1, value: 0, name: "Right Shield Blocks"}]}, leftFoot: {miss: [{x: 1, y: 0.2, z: 1, value: 0, name: "Left Foot Misses"}], hit: [{x: 0.5, y: 0.2, z: 1, value: 0, name: "Left Foot Hits"}]}, rightFoot: {miss: [{x: 3.5, y: 0.2, z: 1, value: 0, name: "Right Foot Misses"}], hit: [{x: 3, y: 0.2, z: 1, value: 0, name: "Right Foot Hits"}]}}, dragonControl: 1, locationControl: 1, oppositeControl: 0, clockwiseControl: 0, dragonDifficulty: 1, showTrajectory: true, easyPickup: true, widthStep: 25, greenWidth: 3, grayWidth: 3, bridgeWidth: 6, stepsWidth: 4};
+    state = {bubbleChart:{catches: [], goals: []}, event: {status: 'up', x: 0, y: 0}, styles: {position: 'fixed', top: 0, left: 0, width: 0, height: 0}, currentPatient: {PatientId: '', FirstName: 'Select patient name', LastName: ''}, currentGame: 'Select game', startMenu: 'visible', level: 3, adaptiveDifficulty: true, difficulty: 1, shootDistance: 4, ballSpeed: 15, maxHeight: 0.5, soccerPaused: true, soccerGameControls: 'hidden', bridgeGameControls: 'visible', volume: 100, customMenu: 'hidden', timeWarp: false, wheelchairMode: false, bridgeStats: {playerDamage: [{x: 2, y: 1.25, z: 1, value: 0, name: "Player Damage"}], dragonDamage: [{x: 3.3, y: 1.75, z: 1, value: 0, name: "Dragon Damage"}], dodges: [{x: 3.8, y: 1.75, z: 1, value: 0, name: "Dodges"}], leftShield: {miss: [{x: 0.3, y: 1.2, z: 1, value: 0, name: "Left Shield Dragon Hits"}], hit: [{x: 1.05, y: 1.05, z: 1, value: 0, name: "Left Shield Blocks"}]}, rightShield: {miss: [{x: 2.95, y: 1.05, z: 1, value: 0, name: "Right Shield Dragon Hits"}], hit: [{x: 3.7, y: 1.2, z: 1, value: 0, name: "Right Shield Blocks"}]}, leftFoot: {miss: [{x: 1, y: 0.2, z: 1, value: 0, name: "Left Foot Misses"}], hit: [{x: 0.5, y: 0.2, z: 1, value: 0, name: "Left Foot Hits"}]}, rightFoot: {miss: [{x: 3.5, y: 0.2, z: 1, value: 0, name: "Right Foot Misses"}], hit: [{x: 3, y: 0.2, z: 1, value: 0, name: "Right Foot Hits"}]}}, dragonControl: 1, locationControl: 1, oppositeControl: 0, clockwiseControl: 0, dragonDifficulty: 1, showTrajectory: true, easyPickup: true, widthStep: 25, greenWidth: 2, grayWidth: 2, bridgeWidth: 5, stepsWidth: 2};
 
     handleMouseDown(e){
         chartstatus = 'down';
@@ -177,6 +180,12 @@ class CurrentApplication extends Component{
           }
           else if(result.message=="killed"){
               this.setState({startMenu: "visible", bridgeGameControls: "hidden"});
+          }
+          else if(result.message=="step"){
+              console.log(result.data.xPos);
+              console.log(result.data.zPos);
+              console.log(result.data.isIn);
+              console.log(result.data.foot);
           }
       }
   }
@@ -580,7 +589,6 @@ class CurrentApplication extends Component{
 
     increaseGreenWidth(){
         const greenWidth = this.state.greenWidth;
-        console.log(greenWidth);
         if(greenWidth<7){
             this.setState({greenWidth: (greenWidth+1)});
             fetch('/api/bridge/current/PlatformsWidth', {
@@ -598,7 +606,6 @@ class CurrentApplication extends Component{
 
     decreaseGreenWidth(){
         const greenWidth = this.state.greenWidth;
-        console.log(greenWidth);
         if(greenWidth>1){
             this.setState({greenWidth: (greenWidth-1)});
             fetch('/api/bridge/current/PlatformsWidth', {
@@ -613,9 +620,111 @@ class CurrentApplication extends Component{
               .catch(error => console.error('Error:', error));
         }
     }
+
+    increaseGrayWidth(){
+        const grayWidth = this.state.grayWidth;
+        if(grayWidth<7){
+            this.setState({grayWidth: (grayWidth+1)});
+            fetch('/api/bridge/current/PlatformsWidth', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({woodBridge: this.state.bridgeWidth, stoneBridge: this.state.stepsWidth, platform1: grayWidth+1, platform2: this.state.greenWidth}),
+              })
+              .then((response) => {
+              })
+              .catch(error => console.error('Error:', error));
+        }   
+    }
+
+    decreaseGrayWidth(){
+        const grayWidth = this.state.grayWidth;
+        if(grayWidth>1){
+            this.setState({grayWidth: (grayWidth-1)});
+            fetch('/api/bridge/current/PlatformsWidth', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({woodBridge: this.state.bridgeWidth, stoneBridge: this.state.stepsWidth, platform1: grayWidth-1, platform2: this.state.greenWidth}),
+              })
+              .then((response) => {
+              })
+              .catch(error => console.error('Error:', error));
+        }
+    }
+
+    increaseBridgeWidth(){
+        const bridgeWidth = this.state.bridgeWidth;
+        if(bridgeWidth<7){
+            this.setState({bridgeWidth: (bridgeWidth+1)});
+            fetch('/api/bridge/current/PlatformsWidth', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({woodBridge: bridgeWidth+1, stoneBridge: this.state.stepsWidth, platform1: this.state.grayWidth, platform2: this.state.greenWidth}),
+              })
+              .then((response) => {
+              })
+              .catch(error => console.error('Error:', error));
+        }   
+    }
+
+    decreaseBridgeWidth(){
+        const bridgeWidth = this.state.bridgeWidth;
+        if(bridgeWidth>1){
+            this.setState({bridgeWidth: (bridgeWidth-1)});
+            fetch('/api/bridge/current/PlatformsWidth', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({woodBridge: bridgeWidth-1, stoneBridge: this.state.stepsWidth, platform1: this.state.grayWidth, platform2: this.state.greenWidth}),
+              })
+              .then((response) => {
+              })
+              .catch(error => console.error('Error:', error));
+        }
+    }
+
+    increaseStepsWidth(){
+        const stepsWidth = this.state.stepsWidth;
+        if(stepsWidth<7){
+            this.setState({stepsWidth: (stepsWidth+1)});
+            fetch('/api/bridge/current/PlatformsWidth', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({woodBridge: this.state.bridgeWidth, stoneBridge: stepsWidth+1, platform1: this.state.grayWidth, platform2: this.state.greenWidth}),
+              })
+              .then((response) => {
+              })
+              .catch(error => console.error('Error:', error));
+        }   
+    }
+
+    decreaseStepsWidth(){
+        const stepsWidth = this.state.stepsWidth;
+        if(stepsWidth>1){
+            this.setState({stepsWidth: (stepsWidth-1)});
+            fetch('/api/bridge/current/PlatformsWidth', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({woodBridge: this.state.bridgeWidth, stoneBridge: stepsWidth-1, platform1: this.state.grayWidth, platform2: this.state.greenWidth}),
+              })
+              .then((response) => {
+              })
+              .catch(error => console.error('Error:', error));
+        }
+    }
     
   componentDidMount(){
-    
+      
     fetch('/api/currentApplication', {
       method: 'GET',
       headers: {
@@ -725,45 +834,89 @@ class CurrentApplication extends Component{
       ctTableResponsive
       content={
                   <Row>
-                  <Col md={8}>
+                  <Col md={8} className="fitContent">
                       <Card
                           title="Top View"
                           ctTableResponsive
                           content={
                               <div className="top-view">
                                           <div className="green-width">
-                                              <Row>
-                                                  <Col md={5}>
-                                                  </Col>
-                                                  <Col md={3}>
-                                                  <Button className="increment-button" bsStyle="info" onClick={this.decreaseGreenWidth.bind(this)}>
+                                              <Row className="align-middle">
+                                                  Change green width &nbsp;
+                                                  <Button className="increment-button" onClick={this.decreaseGreenWidth.bind(this)}>
                                                       -
                                                   </Button>
                                                   {" "+this.state.greenWidth+" "}
-                                                  <Button className="increment-button" bsStyle="info" onClick={this.increaseGreenWidth.bind(this)}>
+                                                  <Button className="increment-button" onClick={this.increaseGreenWidth.bind(this)}>
                                                       +
                                                   </Button>
-                                                  </Col>
-                                                  <Col md={4}>
-                                                  </Col>
                                               </Row>
                                           </div>
                                           <div className="green-side" style={{height: this.state.widthStep*this.state.greenWidth+"px"}}>
                                           </div>
-                                          <div className="bridge">
+                                          <div className="bridge-width">
+                                              <Row className="align-middle">
+                                                  <Button className="increment-button" onClick={this.increaseBridgeWidth.bind(this)}>
+                                                      +
+                                                  </Button>
+                                              </Row>
+                                              <Row className="align-middle">
+                                                  {" "+this.state.bridgeWidth+" "}
+                                              </Row>
+                                              <Row className="align-middle">
+                                                  <Button className="increment-button" onClick={this.decreaseBridgeWidth.bind(this)}>
+                                                      -
+                                                  </Button>
+                                              </Row>
                                           </div>
-                                          <div className="steps">
-                                              <div className="right-steps">
-                                              </div>
-                                              <div className="left-steps">
-                                              </div>
-                                              <div className="right-steps">
-                                              </div>
-                                              <div className="left-steps">
-                                              </div>
+                                          <div className="bridge" style={{width: this.state.widthStep*this.state.bridgeWidth+"px", top: (this.state.widthStep*2+30)+"px"}}>
                                           </div>
-                                      
-                                          <div className="gray-side">
+                                          <div className="steps" style={{top: (this.state.widthStep*2+30)+"px"}}>
+                                              <Row className="stepsHeight">
+                                              <div className="left-steps" style={{width: this.state.widthStep*this.state.stepsWidth+"px"}}>
+                                              </div>
+                                              </Row>
+                                              <Row className="stepsHeight">
+                                              <div className="right-steps" style={{width: this.state.widthStep*this.state.stepsWidth+"px"}}>
+                                              </div>
+                                              </Row>
+                                              <Row className="stepsHeight">
+                                              <div className="left-steps" style={{width: this.state.widthStep*this.state.stepsWidth+"px"}}>
+                                              </div>
+                                              </Row>
+                                              <Row className="stepsHeight">
+                                              <div className="right-steps" style={{width: this.state.widthStep*this.state.stepsWidth+"px"}}>
+                                              </div>
+                                              </Row>
+                                          </div>
+                                          <div className="steps-width">
+                                              <Row className="align-middle">
+                                                  <Button className="increment-button" onClick={this.increaseStepsWidth.bind(this)}>
+                                                      +
+                                                  </Button>
+                                              </Row>
+                                              <Row className="align-middle">
+                                                  {" "+this.state.stepsWidth+" "}
+                                              </Row>
+                                              <Row className="align-middle">
+                                                  <Button className="increment-button" onClick={this.decreaseStepsWidth.bind(this)}>
+                                                      -
+                                                  </Button>
+                                              </Row>
+                                          </div>
+                                          <div className="gray-side" style={{height: this.state.widthStep*this.state.grayWidth+"px"}}>
+                                          </div>
+                                          <div className="gray-width">
+                                              <Row className="align-middle">
+                                                  Change gray width &nbsp;
+                                                  <Button className="increment-button" onClick={this.decreaseGrayWidth.bind(this)}>
+                                                      -
+                                                  </Button>
+                                                  {" "+this.state.grayWidth+" "}
+                                                  <Button className="increment-button" onClick={this.increaseGrayWidth.bind(this)}>
+                                                      +
+                                                  </Button>
+                                              </Row>
                                           </div>
                                       
                               </div>
