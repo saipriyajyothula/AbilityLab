@@ -842,7 +842,6 @@ class CurrentApplication extends Component{
                               <div className="top-view">
                                           <div className="green-width">
                                               <Row className="align-middle">
-                                                  Change green width &nbsp;
                                                   <Button className="increment-button" onClick={this.decreaseGreenWidth.bind(this)}>
                                                       -
                                                   </Button>
@@ -908,7 +907,6 @@ class CurrentApplication extends Component{
                                           </div>
                                           <div className="gray-width">
                                               <Row className="align-middle">
-                                                  Change gray width &nbsp;
                                                   <Button className="increment-button" onClick={this.decreaseGrayWidth.bind(this)}>
                                                       -
                                                   </Button>
