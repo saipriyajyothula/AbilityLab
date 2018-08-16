@@ -12,7 +12,7 @@ var soccerPenaltyControls = {adaptiveDifficulty: true, level: 1, maxHeight: 1.75
 var soccerPenaltyIsPaused = true;
 
 var bridgePlayerData = {playerDamage: 0, dragonDamage: 0, dodges: 0, leftShieldReflects: 0, leftShieldHits: 0, rightShieldReflects:0, rightShieldHits: 0, leftFootMisses:0 ,leftFootHits: 0, rightFootMisses:0 ,rightFootHits: 0}
-var bridgePlatformsData = {woodBridge:2, stoneBridge:2, platform1:2, platform2:2};
+var bridgePlatformsData = {woodBridge:5, stoneBridge:2, platform1:2, platform2:2};
 var bridgeDragonData = {dragonMovement: 0, onHitDirection: 0, byPositionOrientation: 0, trajectorySetting: true, easyShieldMode: true, dragonDifficulty: 0, dragonPosition: 0};
 var bridgeLastStep;
 var appRunning = null;
@@ -254,7 +254,7 @@ var appRouter = function (app) {
 
 
   app.post('/api/bridge/current/newSession', function(req, res){
-    bridgePlatformsData = {woodBridge:2, stoneBridge:2, platform1:2, platform2:2};
+    bridgePlatformsData = {woodBridge:5, stoneBridge:2, platform1:2, platform2:2};
     bridgeDragonData = {dragonMovement: 0, onHitDirection: 0, byPositionOrientation: 0, trajectorySetting: true, easyShieldMode: true, dragonDifficulty: 0, dragonPosition: 0};
     var newSessionId = 0;
     db.serialize(function(){
