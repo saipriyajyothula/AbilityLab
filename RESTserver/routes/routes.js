@@ -44,7 +44,6 @@ var appRouter = function (app) {
   });
 
   app.post('/api/soccerPenalty/addScore', function (req, res) {
-    var aWss = expressWs.getWss('/socket/websocket');
     db.serialize(function() {
       db.run("INSERT INTO SoccerPenaltyData (`SessionId`,`Level`,`XValue`,`YValue`,`Speed`,`Result`) VALUES (?,?,?,?,?,?);",req.body.SessionId, req.body.Level, req.body.XValue, req.body.YValue, req.body.Speed, req.body.Result);
     });
